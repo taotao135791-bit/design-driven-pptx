@@ -47,6 +47,29 @@
 
 ---
 
+## 依赖 / Dependencies
+
+运行本 Skill 的转换器需要以下 Python 库：
+
+```bash
+pip install python-pptx pyyaml
+```
+
+或直接从项目根目录安装：
+
+```bash
+pip install -r requirements.txt
+```
+
+| 库 | 用途 |
+|----|------|
+| `python-pptx` | 生成 `.pptx` 文件 |
+| `PyYAML` | 解析 `.pptd` / `.page` 的 YAML 格式 |
+
+> 注：AI 生成 `.pptd` 阶段无需安装任何依赖，纯文本/YAML 操作。
+
+---
+
 ## 快速开始 / Quick Start
 
 ### 1. 准备输入 / Prepare Inputs
@@ -80,10 +103,6 @@ my-presentation/
 ### 3. 转换为 PPTX / Convert to PPTX
 
 ```bash
-# 安装依赖
-pip install python-pptx pyyaml
-
-# 执行转换
 python3 scripts/pptd2pptx.py my-presentation/slides.pptd my-presentation/slides.pptx
 ```
 

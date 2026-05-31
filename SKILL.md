@@ -88,6 +88,7 @@ The converter supports:
 - Backgrounds (solid, gradient, image)
 - Theme colors & text styles
 - Borders, fills, rotations, shadows, opacity
+- Animations (fade, wipe, flyIn, peekIn, growShrink — per-element with click/withPrevious/afterPrevious triggers)
 - CJK font fallback via `a:ea` element
 
 ## Progressive Loading

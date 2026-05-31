@@ -995,3 +995,75 @@ All theme reference formats are `$<key>`. Circular references are prohibited, an
 | Color reference | theme.colors |
 | Text style reference | theme.textStyles |
 | Table style reference | theme.tableStyles |
+
+## Animation
+
+Per-element animation specification. Applied at the PPTX level via `<p:timing>` XML.
+
+```typescript
+interface Animation {
+  type: 'fade' | 'appear' | 'disappear' | 'wipe' | 'peekIn' | 'peekOut' | 'flyIn' | 'flyOut' | 'growShrink';
+  direction?: 'left' | 'right' | 'top' | 'bottom' | 'up' | 'down';
+  trigger?: 'onClick' | 'withPrevious' | 'afterPrevious';
+  duration?: number;  // milliseconds, default 500
+  delay?: number;     // milliseconds, default 0
+}
+```
+
+### Animation Types
+
+| Type | Description | Direction Support |
+|------|-------------|-------------------|
+| `fade` | Fade in/out | No |
+| `appear` | Instant appearance | No |
+| `disappear` | Instant disappearance | No |
+| `wipe` | Wipe effect | Yes (left/right/top/bottom) |
+| `peekIn` | Peek in from edge | Yes (left/right/top/bottom) |
+| `peekOut` | Peek out to edge | Yes (left/right/top/bottom) |
+| `flyIn` | Fly in from direction | Yes (left/right/top/bottom) |
+| `flyOut` | Fly out to direction | Yes (left/right/top/bottom) |
+| `growShrink` | Scale grow/shrink | No |
+
+### Trigger Modes
+
+| Trigger | Behavior |
+|---------|----------|
+| `onClick` | Animation plays on mouse click (default) |
+| `withPrevious` | Plays simultaneously with previous animation |
+| `afterPrevious` | Plays immediately after previous animation ends |
+
+### Example
+
+```yaml
+elements:
+  - elementId: title
+    elementType: text
+    bounds: [100, 100, 600, 80]
+    animation:
+      type: fade
+      trigger: onClick
+      duration: 500
+    content:
+      text: |
+        Animated Title
+      fontSize: 36
+      color: "#1A1A1A"
+
+  - elementId: chart1
+    elementType: chart
+    bounds: [100, 220, 500, 300]
+    animation:
+      type: wipe
+      direction: left
+      trigger: afterPrevious
+      duration: 700
+    type: bar
+    # ... chart data
+```
+
+### Notes
+
+- Animation is applied to **any** element type: `shape`, `text`, `image`, `table`, `chart`, `icon`
+- Multiple animations on the same slide execute in element order (top-to-bottom in `.page` file)
+- `withPrevious` and `afterPrevious` require at least one preceding `onClick` animation to establish a sequence
+- Unsupported `type` values are silently ignored

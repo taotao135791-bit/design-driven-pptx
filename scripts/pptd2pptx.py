@@ -455,6 +455,171 @@ class PPTDConverter:
         h_emu = px_to_emu(h, self.slide_height_emu, self.pptd_h)
         return x_emu, y_emu, w_emu, h_emu
 
+    # =====================================================================
+    # Animation support
+    # =====================================================================
+    class _AnimationBuilder:
+        """Builds PPTX animation XML via lxml."""
+
+        # Animation type → (filter_prefix, default_transition)
+        ANIM_FILTERS = {
+            'fade': ('fade', 'in'),
+            'appear': ('appear', 'in'),
+            'disappear': ('disappear', 'out'),
+            'wipe': ('wipe', 'in'),
+            'peekIn': ('peekIn', 'in'),
+            'peekOut': ('peekOut', 'out'),
+            'flyIn': ('flyIn', 'in'),
+            'flyOut': ('flyOut', 'out'),
+            'growShrink': ('growShrink', 'in'),
+        }
+
+        # Direction normalization for filter params
+        DIR_MAP = {'left': 'left', 'right': 'right', 'top': 'up', 'bottom': 'down',
+                   'up': 'up', 'down': 'down'}
+
+        TRIGGER_NODE_TYPES = {
+            'onClick': 'clickEffect',
+            'withPrevious': 'withEffect',
+            'afterPrevious': 'afterEffect',
+        }
+
+        def __init__(self, slide):
+            self.slide = slide
+            self._next_id = 10
+            self._seq_childTnLst = None
+
+        def _get_id(self):
+            self._next_id += 1
+            return str(self._next_id)
+
+        def _ensure_timing(self):
+            """Create <p:timing> structure on the slide if absent."""
+            if self._seq_childTnLst is not None:
+                return
+            slide_el = self.slide._element
+            NS = {'p': 'http://schemas.openxmlformats.org/presentationml/2006/main'}
+            timing = slide_el.find(qn('p:timing'))
+            if timing is None:
+                timing = etree.SubElement(slide_el, qn('p:timing'))
+                tnLst = etree.SubElement(timing, qn('p:tnLst'))
+                outer_par = etree.SubElement(tnLst, qn('p:par'))
+                outer_ctn = etree.SubElement(outer_par, qn('p:cTn'))
+                outer_ctn.set('id', self._get_id())
+                outer_ctn.set('dur', 'indefinite')
+                outer_ctn.set('restart', 'never')
+                outer_ctn.set('nodeType', 'tmRoot')
+                childTnLst = etree.SubElement(outer_ctn, qn('p:childTnLst'))
+                seq = etree.SubElement(childTnLst, qn('p:seq'))
+                seq.set('concurrent', '1')
+                seq.set('nextAc', 'seek')
+                seq_ctn = etree.SubElement(seq, qn('p:cTn'))
+                seq_ctn.set('id', self._get_id())
+                seq_ctn.set('dur', 'indefinite')
+                seq_ctn.set('nodeType', 'mainSeq')
+                self._seq_childTnLst = etree.SubElement(seq_ctn, qn('p:childTnLst'))
+            else:
+                # Try to locate existing mainSeq childTnLst
+                seq = timing.find('.//p:seq', namespaces=NS)
+                if seq is not None:
+                    main_ctn = seq.find('.//p:cTn[@nodeType="mainSeq"]', namespaces=NS)
+                    if main_ctn is not None:
+                        self._seq_childTnLst = main_ctn.find(qn('p:childTnLst'))
+                if self._seq_childTnLst is None:
+                    # Rebuild from scratch
+                    timing.clear()
+                    tnLst = etree.SubElement(timing, qn('p:tnLst'))
+                    outer_par = etree.SubElement(tnLst, qn('p:par'))
+                    outer_ctn = etree.SubElement(outer_par, qn('p:cTn'))
+                    outer_ctn.set('id', self._get_id())
+                    outer_ctn.set('dur', 'indefinite')
+                    outer_ctn.set('restart', 'never')
+                    outer_ctn.set('nodeType', 'tmRoot')
+                    childTnLst = etree.SubElement(outer_ctn, qn('p:childTnLst'))
+                    seq = etree.SubElement(childTnLst, qn('p:seq'))
+                    seq.set('concurrent', '1')
+                    seq.set('nextAc', 'seek')
+                    seq_ctn = etree.SubElement(seq, qn('p:cTn'))
+                    seq_ctn.set('id', self._get_id())
+                    seq_ctn.set('dur', 'indefinite')
+                    seq_ctn.set('nodeType', 'mainSeq')
+                    self._seq_childTnLst = etree.SubElement(seq_ctn, qn('p:childTnLst'))
+
+        def _build_filter(self, anim_type, direction):
+            prefix_info = self.ANIM_FILTERS.get(anim_type)
+            if not prefix_info:
+                return None
+            prefix, _ = prefix_info
+            dir_str = self.DIR_MAP.get(direction, '')
+            if dir_str and prefix in ('wipe', 'peekIn', 'peekOut', 'flyIn', 'flyOut'):
+                return f'{prefix}({dir_str})'
+            return prefix
+
+        def add_animation(self, shape, anim_spec):
+            """Add an animation effect targeting *shape*.
+
+            anim_spec fields:
+                type:     fade | appear | disappear | wipe | peekIn | peekOut | flyIn | flyOut | growShrink
+                direction: left | right | top | bottom | up | down
+                trigger:  onClick | withPrevious | afterPrevious
+                duration: milliseconds (default 500)
+                delay:    milliseconds (default 0)
+            """
+            self._ensure_timing()
+            anim_type = anim_spec.get('type', 'fade')
+            direction = anim_spec.get('direction', '')
+            trigger = anim_spec.get('trigger', 'onClick')
+            duration = anim_spec.get('duration', 500)
+            delay = anim_spec.get('delay', 0)
+
+            filter_str = self._build_filter(anim_type, direction)
+            if not filter_str:
+                return
+
+            # Determine transition direction
+            prefix_info = self.ANIM_FILTERS.get(anim_type, ('fade', 'in'))
+            _, default_trans = prefix_info
+            transition = 'out' if 'Out' in anim_type or 'disappear' in anim_type else default_trans
+
+            # Trigger / node type
+            node_type = self.TRIGGER_NODE_TYPES.get(trigger, 'clickEffect')
+            delay_str = 'indefinite' if trigger == 'onClick' else str(delay)
+
+            # Build XML
+            par = etree.SubElement(self._seq_childTnLst, qn('p:par'))
+            ctn = etree.SubElement(par, qn('p:cTn'))
+            ctn.set('id', self._get_id())
+            ctn.set('fill', 'hold')
+            ctn.set('nodeType', node_type)
+            stCondLst = etree.SubElement(ctn, qn('p:stCondLst'))
+            cond = etree.SubElement(stCondLst, qn('p:cond'))
+            cond.set('delay', delay_str)
+            ctn_childTnLst = etree.SubElement(ctn, qn('p:childTnLst'))
+
+            anim = etree.SubElement(ctn_childTnLst, qn('p:animEffect'))
+            anim.set('transition', transition)
+            anim.set('filter', filter_str)
+            anim.set('dur', str(duration))
+            cBhvr = etree.SubElement(anim, qn('p:cBhvr'))
+            cBhvr_ctn = etree.SubElement(cBhvr, qn('p:cTn'))
+            cBhvr_ctn.set('id', self._get_id())
+            cBhvr_ctn.set('dur', str(duration))
+            cBhvr_ctn.set('fill', 'hold')
+            tgtEl = etree.SubElement(cBhvr, qn('p:tgtEl'))
+            spTgt = etree.SubElement(tgtEl, qn('p:spTgt'))
+            spTgt.set('spid', str(shape.shape_id))
+
+    def _apply_animation(self, slide, shape, element):
+        """Apply animation from element spec to shape if present."""
+        anim_spec = element.get('animation')
+        if not anim_spec:
+            return
+        builder = getattr(slide, '_pptd_anim_builder', None)
+        if builder is None:
+            builder = self._AnimationBuilder(slide)
+            slide._pptd_anim_builder = builder
+        builder.add_animation(shape, anim_spec)
+
     def _resolve_style(self, content):
         """Merge text style: theme style + inline overrides."""
         style = {}
@@ -600,6 +765,7 @@ class PPTDConverter:
         if opacity < 1:
             self._apply_opacity(shape, opacity)
 
+        self._apply_animation(slide, shape, element)
         return shape
 
     # =====================================================================
@@ -870,6 +1036,7 @@ class PPTDConverter:
         if opacity < 1:
             self._apply_opacity(shape, opacity)
 
+        self._apply_animation(slide, shape, element)
         return shape
 
     # =====================================================================
@@ -1081,6 +1248,7 @@ class PPTDConverter:
                         alpha = etree.SubElement(srgbClr, qn('a:alpha'))
                     alpha.set('val', str(alpha_val))
 
+        self._apply_animation(slide, shape, element)
         return shape
 
     def _add_image(self, slide, element):
@@ -1156,6 +1324,7 @@ class PPTDConverter:
         if opacity < 1:
             self._apply_opacity(shape, opacity)
 
+        self._apply_animation(slide, shape, element)
         return shape
 
     def _add_table(self, slide, element):
@@ -1230,6 +1399,7 @@ class PPTDConverter:
                                         ea = etree.SubElement(rPr, qn('a:ea'))
                                     ea.set('typeface', cjk_font)
 
+        self._apply_animation(slide, shape, element)
         return shape
 
     def _apply_series_style(self, series_list, style):
@@ -1286,6 +1456,7 @@ class PPTDConverter:
             run.text = f"[Chart: {chart_type}]"
             run.font.size = Pt(14)
             run.font.color.rgb = RGBColor(128, 128, 128)
+            self._apply_animation(slide, shape, element)
             return shape
 
         if isinstance(y_fields, str):
@@ -1427,6 +1598,7 @@ class PPTDConverter:
             run.text = f"[Chart: {chart_type}]"
             run.font.size = Pt(14)
             run.font.color.rgb = RGBColor(128, 128, 128)
+            self._apply_animation(slide, shape, element)
             return shape
 
     def _add_icon(self, slide, element):
@@ -1467,6 +1639,7 @@ class PPTDConverter:
         run.text = f"[{icon_name}]"
         run.font.size = Pt(12)
 
+        self._apply_animation(slide, shape, element)
         return shape
 
     def _set_background(self, slide, bg_spec):

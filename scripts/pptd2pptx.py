@@ -15,6 +15,7 @@ import re
 import copy
 import tempfile
 import math
+import urllib.request
 from html.parser import HTMLParser
 
 import yaml
@@ -165,6 +166,43 @@ class ThemeResolver:
             key = style_ref[1:]
             return copy.deepcopy(self.text_styles.get(key, {}))
         return {}
+
+    def get_color_palette(self):
+        """Extract a usable color palette from theme colors for charts.
+        Returns a list of RGBColor objects."""
+        palette = []
+        # Priority order for chart colors
+        color_keys = ['primary', 'accent', 'secondary', 'primaryDark', 'ink', 'surfaceAlt']
+        for key in color_keys:
+            val = self.colors.get(key)
+            if val:
+                color = self.resolve_color(val)
+                if color and color not in palette:
+                    palette.append(color)
+        # If still too few, add some derived colors from primary
+        if len(palette) < 3 and palette:
+            primary = palette[0]
+            # Add lighter/darker variants
+            palette.append(RGBColor(
+                min(255, int(primary[0] * 1.3)),
+                min(255, int(primary[1] * 1.3)),
+                min(255, int(primary[2] * 1.3))
+            ))
+            palette.append(RGBColor(
+                max(0, int(primary[0] * 0.7)),
+                max(0, int(primary[1] * 0.7)),
+                max(0, int(primary[2] * 0.7))
+            ))
+        return palette if palette else [RGBColor(26, 26, 26)]
+
+    def get_chart_font(self):
+        """Get the best font family for chart text from theme."""
+        # Prefer body style, then any style with a fontFamily
+        for key in ['body', 'bodySm', 'heroTitle', 'sectionHeadline']:
+            style = self.text_styles.get(key, {})
+            if style.get('fontFamily'):
+                return style['fontFamily'].split(',')[0].strip()
+        return "Arial"
 
 
 # ---------------------------------------------------------------------------
@@ -1053,41 +1091,62 @@ class PPTDConverter:
         if not src:
             return None
 
-        if not os.path.isabs(src):
+        # Handle network URLs
+        tmp_path = None
+        if src.startswith('http://') or src.startswith('https://'):
+            try:
+                fd, tmp_path = tempfile.mkstemp(suffix=os.path.splitext(src.split('?')[0])[1] or '.jpg')
+                os.close(fd)
+                urllib.request.urlretrieve(src, tmp_path)
+                src = tmp_path
+            except Exception as e:
+                print(f"Warning: failed to download image from {src}: {e}")
+                if tmp_path and os.path.exists(tmp_path):
+                    os.remove(tmp_path)
+                return None
+        elif not os.path.isabs(src):
             src = os.path.join(self.base_dir, src)
 
         if not os.path.exists(src):
             print(f"Warning: image not found: {src}")
+            if tmp_path and os.path.exists(tmp_path):
+                os.remove(tmp_path)
             return None
 
-        if src.lower().endswith('.svg'):
-            png_bytes = svg_to_png_bytes(src)
-            if png_bytes:
-                fd, tmp_path = tempfile.mkstemp(suffix='.png')
-                try:
-                    with os.fdopen(fd, 'wb') as f:
-                        f.write(png_bytes)
-                    shape = slide.shapes.add_picture(tmp_path, Emu(x), Emu(y), Emu(w), Emu(h))
-                finally:
+        try:
+            if src.lower().endswith('.svg'):
+                png_bytes = svg_to_png_bytes(src)
+                if png_bytes:
+                    fd, svg_tmp = tempfile.mkstemp(suffix='.png')
                     try:
-                        os.remove(tmp_path)
-                    except OSError:
-                        pass
+                        with os.fdopen(fd, 'wb') as f:
+                            f.write(png_bytes)
+                        shape = slide.shapes.add_picture(svg_tmp, Emu(x), Emu(y), Emu(w), Emu(h))
+                    finally:
+                        try:
+                            os.remove(svg_tmp)
+                        except OSError:
+                            pass
+                else:
+                    print(f"Warning: cannot render SVG {src} (install resvg or use programmatic shapes)")
+                    shape = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Emu(x), Emu(y), Emu(w), Emu(h))
+                    shape.fill.solid()
+                    shape.fill.fore_color.rgb = RGBColor(240, 240, 240)
+                    tf = shape.text_frame
+                    p = tf.paragraphs[0]
+                    p.alignment = PP_ALIGN.CENTER
+                    run = p.add_run()
+                    run.text = "[SVG]"
+                    run.font.size = Pt(10)
+                    run.font.color.rgb = RGBColor(128, 128, 128)
             else:
-                print(f"Warning: cannot render SVG {src} (install resvg or use programmatic shapes)")
-                shape = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Emu(x), Emu(y), Emu(w), Emu(h))
-                shape.fill.solid()
-                shape.fill.fore_color.rgb = RGBColor(240, 240, 240)
-                tf = shape.text_frame
-                p = tf.paragraphs[0]
-                p.alignment = PP_ALIGN.CENTER
-                run = p.add_run()
-                run.text = "[SVG]"
-                run.font.size = Pt(10)
-                run.font.color.rgb = RGBColor(128, 128, 128)
-                return shape
-        else:
-            shape = slide.shapes.add_picture(src, Emu(x), Emu(y), Emu(w), Emu(h))
+                shape = slide.shapes.add_picture(src, Emu(x), Emu(y), Emu(w), Emu(h))
+        finally:
+            if tmp_path and os.path.exists(tmp_path):
+                try:
+                    os.remove(tmp_path)
+                except OSError:
+                    pass
 
         border_spec = element.get('border')
         self._apply_border(shape, border_spec)
@@ -1274,13 +1333,29 @@ class PPTDConverter:
             )
             chart = graphic_frame.chart
 
+            # Apply theme colors if no explicit colors provided
+            if not colors:
+                palette = self.theme.get_color_palette()
+                colors = [f"#{c[0]:02X}{c[1]:02X}{c[2]:02X}" for c in palette]
+
             if colors and hasattr(chart, 'series'):
                 for idx, series in enumerate(chart.series):
-                    if idx < len(colors):
-                        color = self.theme.resolve_color(colors[idx])
-                        if color:
-                            series.format.fill.solid()
-                            series.format.fill.fore_color.rgb = color
+                    color_idx = idx % len(colors)
+                    color = self.theme.resolve_color(colors[color_idx])
+                    if color:
+                        series.format.fill.solid()
+                        series.format.fill.fore_color.rgb = color
+
+            # Apply theme font to chart
+            chart_font = self.theme.get_chart_font()
+            if chart.has_title and chart.chart_title.has_text_frame:
+                for para in chart.chart_title.text_frame.paragraphs:
+                    for run in para.runs:
+                        run.font.name = chart_font
+            if chart.has_legend:
+                for para in chart.legend.text_frame.paragraphs:
+                    for run in para.runs:
+                        run.font.name = chart_font
 
             # Apply seriesStyle settings
             series_style = element.get('seriesStyle', {})
@@ -1355,10 +1430,28 @@ class PPTDConverter:
             return shape
 
     def _add_icon(self, slide, element):
+        """Render icon as a freeform shape from path library, or fallback to placeholder text."""
         bounds = element.get('bounds', [0, 0, 100, 100])
         x, y, w, h = self._to_emu(*bounds)
         icon_name = element.get('iconName', 'fas:question')
 
+        # Try to resolve icon path from library
+        try:
+            from icon_paths import get_icon_path
+            path_str = get_icon_path(icon_name)
+        except Exception:
+            path_str = None
+
+        if path_str:
+            # Render as freeform shape
+            icon_element = dict(element)
+            icon_element['path'] = path_str
+            icon_element['shapeName'] = 'custom'
+            result = self._add_freeform_shape(slide, icon_element)
+            if result is not None:
+                return result
+
+        # Fallback: placeholder text
         shape = slide.shapes.add_shape(
             MSO_SHAPE.RECTANGLE, Emu(x), Emu(y), Emu(w), Emu(h)
         )
@@ -1556,6 +1649,80 @@ class PPTDConverter:
                 eid = element.get('elementId', 'unknown')
                 print(f"Error processing element {eid} ({etype}): {e}")
 
+    def _draw_grain_texture(self, slide, bounds, color, density=0.03, dot_size=2):
+        """Draw grain/noise texture using many small dots.
+        Uses a deterministic pseudo-random pattern so output is reproducible."""
+        bx, by, bw, bh = bounds
+        # Use a simple hash-based pseudo-random for reproducibility
+        def prng(seed):
+            while True:
+                seed = (seed * 1103515245 + 12345) & 0x7fffffff
+                yield seed / 0x7fffffff
+
+        rng = prng(42)
+        # Calculate number of dots based on area and density
+        area = bw * bh
+        num_dots = max(20, int(area * density))
+
+        for _ in range(num_dots):
+            rx = bx + next(rng) * bw
+            ry = by + next(rng) * bh
+            rw = dot_size + next(rng) * dot_size
+            rh = dot_size + next(rng) * dot_size
+            elem = {
+                'elementType': 'shape',
+                'shapeName': 'rect',
+                'bounds': [rx, ry, rw, rh],
+                'fill': {'type': 'solid', 'color': color},
+                'opacity': 0.15 + next(rng) * 0.25,
+            }
+            self._add_shape(slide, elem)
+
+    def _add_page_number(self, slide, page_num, total_pages, config):
+        """Add automatic page number to slide."""
+        position = config.get('position', 'bottom-right')
+        color = config.get('color', '#000000')
+        font_size = config.get('fontSize', 10)
+        font_family = config.get('fontFamily', 'Space Grotesk')
+        format_str = config.get('format', '{n}')
+        offset_x = config.get('offsetX', 40)
+        offset_y = config.get('offsetY', 30)
+
+        text = format_str.format(n=page_num, total=total_pages)
+
+        # Calculate position
+        if position == 'bottom-right':
+            x = 1280 - offset_x - 60
+            y = 720 - offset_y - 20
+        elif position == 'bottom-left':
+            x = offset_x
+            y = 720 - offset_y - 20
+        elif position == 'bottom-center':
+            x = 640 - 30
+            y = 720 - offset_y - 20
+        elif position == 'top-right':
+            x = 1280 - offset_x - 60
+            y = offset_y
+        elif position == 'top-left':
+            x = offset_x
+            y = offset_y
+        else:
+            x = 1280 - offset_x - 60
+            y = 720 - offset_y - 20
+
+        elem = {
+            'elementType': 'text',
+            'bounds': [x, y, 60, 20],
+            'content': {
+                'text': text,
+                'fontSize': font_size,
+                'color': color,
+                'fontFamily': font_family,
+            },
+            'wrap': False,
+        }
+        self._add_text(slide, elem)
+
     def convert(self, output_path=None):
         if output_path is None:
             base, _ = os.path.splitext(self.pptd_path)
@@ -1564,7 +1731,11 @@ class PPTDConverter:
         pages = self.pptd.get('pages', [])
         blank_layout = self.prs.slide_layouts[6]
 
-        for page_ref in pages:
+        # Global page number config
+        page_number_config = self.pptd.get('pageNumber')
+        total_pages = len(pages)
+
+        for page_idx, page_ref in enumerate(pages):
             page_path = os.path.join(self.base_dir, page_ref)
             if not os.path.exists(page_path):
                 print(f"Warning: page file not found: {page_path}")
@@ -1575,6 +1746,11 @@ class PPTDConverter:
 
             slide = self.prs.slides.add_slide(blank_layout)
             self.convert_page(slide, page_data)
+
+            # Add automatic page number if configured
+            if page_number_config:
+                page_num = page_idx + 1
+                self._add_page_number(slide, page_num, total_pages, page_number_config)
 
         self.prs.save(output_path)
         print(f"Saved: {output_path}")

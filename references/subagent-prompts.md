@@ -105,12 +105,14 @@ Use this for `task` when assigning content pages:
 ## Step 1: Layout Selection (MANDATORY)
 Before writing any elements, analyze the content and choose ONE layout from the design.md layout catalog:
 
+**Priority rule:** If the style's `design.md` contains category-specific signature layouts (e.g., `magazine-spread`, `manifesto-poster`, `sticker-sheet`, `crt-terminal`, `executive-summary`), **prioritize those** when the content matches their use case. They are the visual DNA of the style and produce more distinctive results than the universal templates.
+
 Content Pattern → Layout:
-- Key conclusion / manifesto statement (1 core idea) → full-statement
-- Topic overview with 2-3 sub-sections → asymmetric-split
-- Feature list / process steps / comparison (3-5 items) → three-card-grid
-- Numeric data / metrics / percentages (3+ data points) → data-dashboard
-- Sequence / roadmap / ladder (4+ ordered steps) → timeline-vertical
+- Key conclusion / manifesto statement (1 core idea) → full-statement (or `manifesto-poster` for Bold styles)
+- Topic overview with 2-3 sub-sections → asymmetric-split (or `magazine-spread` for Editorial styles)
+- Feature list / process steps / comparison (3-5 items) → three-card-grid (or `sticker-sheet` for Playful styles)
+- Numeric data / metrics / percentages (3+ data points) → data-dashboard (or `executive-summary` for Professional styles)
+- Sequence / roadmap / ladder (4+ ordered steps) → timeline-vertical (or `process-flow` for Professional styles)
 - Conceptual explanation / analysis → standard-content
 
 Write your chosen layout name in a comment at the top of the page file.

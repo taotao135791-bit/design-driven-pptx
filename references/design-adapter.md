@@ -399,6 +399,115 @@ When reading a source `design.md`, the main agent MUST:
 4. Map any style-specific layout variants (e.g., "coral uses 40/60 split", "playful uses rotated cards") into the `layouts:` section as `styleOverrides` or inline adaptation notes.
 5. The layout catalog must be written in the generated `design.md` so that subagents can reference it during page construction.
 
+---
+
+## 6.5 Style-Category Exclusive Layouts
+
+Beyond the 6 universal templates, each aesthetic category has **signature layouts** that define its visual DNA. When a style belongs to one of these categories, its generated `design.md` MUST include 2-3 category-specific layouts in addition to the universal set.
+
+### Editorial (文学/编辑风) — 7 styles
+
+**Signature layout: magazine-spread**
+- **When to use:** Long-form narrative, essay-style content, brand storytelling
+- **Composition:**
+  - Full-bleed image or colored band across top 35% (layer -1)
+  - Pull-quote in display font, left-aligned, 60% width (layer 1)
+  - Body text in 2 narrow columns below (layer 1)
+  - Running header with chapter title and page number (layer 2)
+- **Key DNA:** Asymmetry, generous whitespace, pull-quote hierarchy, column text
+
+**Signature layout: editorial-quote**
+- **When to use:** Testimonials, key insights, transitional pages
+- **Composition:**
+  - Oversized quotation mark as decorative text (layer -1, 200px, 5% opacity)
+  - Quote text centered, 36-48px serif, max 4 lines (layer 1)
+  - Attribution below, 14px, right-aligned (layer 1)
+  - Thin hairline rule above and below quote block (layer 2)
+- **Key DNA:** Dramatic scale contrast, centered isolation, hairline rules
+
+### Bold (粗野主义/海报风) — 8 styles
+
+**Signature layout: manifesto-poster**
+- **When to use:** Core claims, bold statements, single-message pages
+- **Composition:**
+  - Full-bleed background in signature color (layer -1)
+  - 1-3 words in 120-200px display font, breaking across lines (layer 1)
+  - Hard-edge accent block in contrasting color behind a keyword (layer 0)
+  - No body text — pure typographic impact
+- **Key DNA:** Maximum scale, minimal words, hard color blocks, zero decoration
+
+**Signature layout: bauhaus-grid**
+- **When to use:** Multi-item content that benefits from grid structure
+- **Composition:**
+  - 12-column implicit grid (not drawn, but align to it)
+  - Items in colored rectangles with 3-4px black borders (layer 0)
+  - Each rectangle has number + title + 1-line description (layer 1)
+  - Some rectangles span 2 columns, some 1 — intentional rhythm
+- **Key DNA:** Grid discipline, border as layout tool, color-coding, asymmetry within grid
+
+### Playful (趣味风) — 7 styles
+
+**Signature layout: sticker-sheet**
+- **When to use:** Feature lists, tips, fun facts, any lighthearted content
+- **Composition:**
+  - 3-5 "sticker" cards with slight rotation (±2-4°, alternating directions) (layer 0)
+  - Each card has a hand-drawn-style border (3px, slightly irregular via rotation) (layer 0)
+  - Small icon or emoji at top of each sticker (layer 1)
+  - Short title + 2-line description inside each sticker (layer 1)
+  - Scattered small decorative shapes (stars, circles, blobs) around stickers (layer 2)
+- **Key DNA:** Rotation, organic borders, scattered decorations, sticker metaphor
+
+**Signature layout: doodle-divide**
+- **When to use:** Content with clear before/after or problem/solution structure
+- **Composition:**
+  - Page split by a diagonal or wavy line (drawn with custom path) (layer -1)
+  - Left side: lighter background, problem statement (layer 1)
+  - Right side: signature color background, solution/result (layer 1)
+  - Doodle-style arrow or connector crossing the divide (layer 2)
+- **Key DNA:** Diagonal/wavy split, doodle connectors, color contrast across divide
+
+### Retro (复古风) — 4 styles
+
+**Signature layout: crt-terminal**
+- **When to use:** Technical content, code snippets, data readouts
+- **Composition:**
+  - Dark background with scanline overlay (layer -1, use `decorations: [{type: scanlines}]`)
+  - Monospace text in phosphor-green or amber (layer 1)
+  - Pixel-style border frame (1px lines forming a box) (layer 0)
+  - Blinking-cursor-style block at end of key lines (layer 2)
+- **Key DNA:** Scanlines, monospace, phosphor colors, pixel frame, terminal metaphor
+
+**Signature layout: zine-collage**
+- **When to use:** Mood boards, cultural references, multi-source content
+- **Composition:**
+  - 2-3 content blocks at different rotations (±1-3°) (layer 0)
+  - Each block has a "torn paper" or "tape" edge effect (simulated with offset shapes) (layer 0)
+  - Mixed fonts: display + handwritten + typewriter within same page (layer 1)
+  - Grain texture overlay across entire page (layer -1, use `decorations: [{type: grain}]`)
+- **Key DNA:** Rotation, mixed typography, grain texture, collage layering
+
+### Professional (商务风) — 8 styles
+
+**Signature layout: executive-summary**
+- **When to use:** Top-level findings, KPI dashboards, executive overviews
+- **Composition:**
+  - Top row: 3-4 metric cards with large numerals (56-72px) + label below (layer 1)
+  - Middle: horizontal bar chart or mini line chart (layer 1)
+  - Bottom: 2-column bullet summary (layer 1)
+  - Subtle grid background (layer -1, use `decorations: [{type: grid}]`)
+- **Key DNA:** Metric cards, data visualization, grid structure, information density
+
+**Signature layout: process-flow**
+- **When to use:** Workflows, methodologies, sequential processes
+- **Composition:**
+  - 4-6 steps in horizontal flow, connected by arrows or lines (layer 0)
+  - Each step: numbered circle + title + 1-line description (layer 1)
+  - Alternating background bands for each step (layer -1)
+  - Bottom timeline bar with phase markers (layer 0)
+- **Key DNA:** Horizontal flow, numbered steps, connecting lines, timeline bar
+
+---
+
 ## 5a. CSS Unit Conversion Guide
 
 Design.md often uses CSS viewport-relative units. For PPTD (fixed 1280×720 canvas), convert as follows:

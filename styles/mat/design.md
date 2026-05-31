@@ -156,18 +156,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from dark green base + cream geometric weave pattern (overlapping horizontal and vertical thin rectangles) + accent lines. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for mat"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from cream lines on dark bg, or dark lines on cream bg + center dash."
     type: "accent"
-    description: "Chapter transition page accent for mat"
+    color: "#F0E8D2"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal cream line with small dark center square."
     type: "divider"
-    description: "Horizontal divider for mat"
-
+    color: "#F0E8D2"
 
 ## Frontend Slides Fixed-Stage Policy
 

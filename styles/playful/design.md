@@ -189,22 +189,23 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from bg and bg-alt rounded color blobs + light accent shapes + playful scattered dots. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for playful"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from text-colored lines + bg center circle."
     type: "accent"
-    description: "Chapter transition page accent for playful"
+    color: "#1A1A1A"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal text-colored line with bg-alt center dot."
     type: "divider"
-    description: "Horizontal divider for playful"
+    color: "#1A1A1A"
   pattern-dots:
-    file: "decorations/pattern-dots.svg"
+    draw: "Small light and bg-alt circles (diameter 6px, opacity: 0.30) in a playful irregular dot grid. Spacing ~28px."
     type: "pattern"
-    description: "dots texture pattern for playful"
-
+    color: "#F7DEC6"
+    opacity: 0.30
+    spacing: 28
+    dotSize: 6
 
 ## Frontend Slides Fixed-Stage Policy
 

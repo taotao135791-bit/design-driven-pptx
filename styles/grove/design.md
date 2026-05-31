@@ -203,18 +203,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from dark green base + lighter green organic shapes (leaf-like freeform paths) + cream text watermark. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for grove"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from fg-colored lines on dark bg, or green lines on light bg + center dot."
     type: "accent"
-    description: "Chapter transition page accent for grove"
+    color: "#d4cfbf"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal fg line with small green center leaf shape."
     type: "divider"
-    description: "Horizontal divider for grove"
-
+    color: "#d4cfbf"
 
 ## Frontend Slides Fixed-Stage Policy
 

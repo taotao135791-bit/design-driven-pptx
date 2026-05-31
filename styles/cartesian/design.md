@@ -198,22 +198,23 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from bg-primary and bg-secondary rectangular panels + thin accent grid lines. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for cartesian"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from thin accent-colored lines + center crosshair lines."
     type: "accent"
-    description: "Chapter transition page accent for cartesian"
+    color: "#8A8178"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal accent line with small center square."
     type: "divider"
-    description: "Horizontal divider for cartesian"
+    color: "#8A8178"
   pattern-grid:
-    file: "decorations/pattern-grid.svg"
+    draw: "Thin accent-colored horizontal and vertical lines (1px, opacity: 0.15) forming a regular grid. Spacing ~40px."
     type: "pattern"
-    description: "grid texture pattern for cartesian"
-
+    color: "#8A8178"
+    opacity: 0.15
+    spacing: 40
+    lineWidth: 1
 
 ## Frontend Slides Fixed-Stage Policy
 

@@ -95,25 +95,65 @@ Design pattern → PPTD implementation:
 
 Design pattern → PPTD implementation:
 - "Oversized background numeral at 12% opacity" → Text element with opacity: 0.12, large fontSize
-- "45° diagonal hatch pattern" → Use decorations/pattern-hatch.svg via `elementType: image` with opacity, or shape with gradient fill
+- "45° diagonal hatch pattern" → Multiple thin rotated `shapeName: rect` elements with `opacity`, or shape with gradient fill
 - "Accent line (80×4 rectangle)" → Shape rect at specified size with solid fill
 
-### SVG Decorations
+### Programmatic Decorations
 
-If the design.md defines a `decorations:` section, map each decoration to PPTD elements:
+Decorations are drawn natively using `elementType: shape` (and occasionally `text`). Do **not** reference external SVG/PNG files.
 
-| Decoration Type | PPTD Implementation |
-|-----------------|---------------------|
-| pattern (e.g., hatch) | `elementType: image`, `src: "styles/<name>/decorations/pattern-hatch.svg"`, set `opacity` for subtlety |
-| background (e.g., cover-bg) | `elementType: image`, `src: "styles/<name>/decorations/cover-bg.svg"`, full-slide bounds |
-| accent (e.g., chapter frame) | `elementType: image`, `src: "styles/<name>/decorations/chapter-accent.svg"`, placed with opacity |
-| divider | `elementType: image`, `src: "styles/<name>/decorations/divider.svg"`, placed between content sections |
+#### Common Decorative Patterns → PPTD Equivalent
 
-Rules:
-- SVG paths in `src` are relative to the design.md file location
-- Use `opacity` to control subtlety (0.06–0.15 for textures, 0.3–0.5 for accents)
-- For repeating patterns (hatch), use `fit: {mode: fill}` on the image element
-- SVG decorations inherit the design system's color through the SVG file itself
+| Decorative Pattern | PPTD Implementation |
+|--------------------|---------------------|
+| Corner brackets (L-shapes) | `shapeName: custom` with SVG-like `path` property |
+| Accent lines | `shapeName: rect` with small height and solid fill |
+| Hatch patterns | Multiple thin rotated `shapeName: rect` elements |
+| Scanlines | Multiple horizontal thin `shapeName: rect` elements |
+| Dot grids | Multiple small `shapeName: rect` or `ellipse` elements |
+| Background numerals | `elementType: text` with large `fontSize` + low `opacity` |
+| Dividers | `shapeName: rect` or combination of rect elements |
+
+#### Shape Properties for Decorations
+
+**`opacity`** (number, 0.0–1.0)
+Controls the transparency of the shape. Use low values for subtle textures and overlays:
+- 0.06–0.15 for background textures and patterns
+- 0.3–0.5 for accent decorations
+- 0.6–0.9 for prominent decorative elements
+
+**`shadow`** (object)
+Adds a shadow effect to the shape:
+```yaml
+shadow:
+  color: "#000000"
+  blur: 0          # Use 0 for hard shadows, >0 for soft shadows
+  offset: [4, 4]   # Use offset array, not offsetX/offsetY
+  opacity: 0.2
+```
+
+**`path`** (string, required for `shapeName: custom`)
+Defines a custom shape using an SVG-like path string. Format:
+```
+"width,height;M... L... C... Z"
+```
+The first segment specifies the path's bounding-box dimensions. The remainder is standard SVG path syntax.
+
+**Example — L-shaped corner bracket:**
+```yaml
+elementType: shape
+shapeName: custom
+path: "24,24;M0 0 L24 0 L24 4 L4 4 L4 24 L0 24 Z"
+fill:
+  type: solid
+  color: "$primary"
+```
+
+#### Rules
+- All decorative elements must be composed from native `shape` and `text` elements
+- Use `opacity` for subtlety — never rely on pre-rendered transparent images
+- For repeating patterns, create multiple shape instances or use a single custom path
+- Decorative colors should reference theme variables (e.g., `$primary`, `$ink`)
 
 ## 3a. Dynamic Color Adaptation (Optional)
 
@@ -215,6 +255,26 @@ theme:
         width: 1
         color: "<border color>"
 ```
+
+## 5a. CSS Unit Conversion Guide
+
+Design.md often uses CSS viewport-relative units. For PPTD (fixed 1280×720 canvas), convert as follows:
+
+| CSS Expression | PPTD px Equivalent | Notes |
+|---------------|-------------------|-------|
+| `clamp(48px, 10vw, 128px)` | 128 | Use the max value for display text |
+| `clamp(32px, 5vw, 64px)` | 64 | Use the max value for headlines |
+| `clamp(24px, 3.5vw, 45px)` | 45 | Use the max value for subheads |
+| `min(120px, 9vw, 13vh)` | 120 | Use the min value as the cap |
+| `clamp(14.4px, 1.2vw, 18.4px)` | 18 | Use the max for body text |
+| `1vw` | 12.8px | 1vw = 12.8px on 1280px canvas |
+| `1vh` | 7.2px | 1vh = 7.2px on 720px canvas |
+
+Rules:
+1. For display/headline fonts: use the **upper bound** of clamp() (the designed maximum)
+2. For body text: use the **upper bound** as well (PPT is viewed at full size)
+3. For padding/margins with clamp(): use the **middle value** or calculate from vw/vh
+4. Never use `vw/vh/em/rem` directly in PPTD — always convert to px
 
 ## 6. CJK Adaptation Rules
 

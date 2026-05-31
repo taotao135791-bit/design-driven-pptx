@@ -107,10 +107,26 @@ Use this for `task` when assigning content pages:
 - 布局模式：左右分割/40-60分割/多列卡片/Sidebar/全幅内容
 - 信息密度：中高密度，每页聚焦一个核心论点
 - 装饰：按设计系统的组件规范实现（卡片边框、accent线、装饰数字等）
-- **SVG装饰**：如果 design.md 定义了 decorations，在合适的页面使用装饰SVG元素
-  - 封面页可使用 cover-bg.svg 作为背景装饰
-  - 章节页可使用 chapter-accent.svg 作为框架装饰
-  - 内容页可使用 divider.svg 作为分隔线，pattern-hatch.svg 作为区域纹理
+- **程序装饰**：如果 design.md 定义了 decorations，使用原生 `shape` 元素绘制装饰（禁止引用外部 SVG/PNG 文件）
+  - L 形角括号：使用 `shapeName: custom` + `path` 属性，例如 `"24,24;M0 0 L24 0 L24 4 L4 4 L4 24 L0 24 Z"`
+  - 强调线：使用 `shapeName: rect` 并设置较小高度
+  - 纹理图案：使用多个 `shape` 元素配合 `opacity` 属性
+  - 背景数字：使用 `elementType: text` + 大字号 + 低 `opacity`
+  - `decorations:` 字段描述的是绘制方式，不是文件路径
+- **Z-Order 与 layer 字段**：为避免元素遮挡（如背景色块盖住文字），**必须为每个元素设置 `layer` 字段**：
+  - `layer: -1` — 背景层：全屏色块、背景图案、大号装饰数字（低透明度）
+  - `layer: 0` — 中层（默认）：卡片背景、容器 shape、分割线
+  - `layer: 1` — 内容层：文字、图表、表格、图片
+  - `layer: 2` — 前景层：accent 线、角标、标签 pill、小装饰
+  - 转换器会自动按 layer 排序渲染，layer 小的先绘制（在底层），layer 大的后绘制（在顶层）
+
+### Layer Checklist (MANDATORY)
+Before submitting, verify EVERY element has a `layer` field:
+- [ ] Background shapes: layer: -1
+- [ ] Card/container shapes: layer: 0
+- [ ] Text, charts, tables, images: layer: 1
+- [ ] Accent lines, corner brackets, labels: layer: 2
+
 - **数据可视化**：如果内容中有3+个相关数据点（如"Q1: 120, Q2: 132, Q3: 101"），按 chart-guide.md 生成 chart 元素
 - 内容100%忠实原文，未增删
 - pageType: content
@@ -127,6 +143,77 @@ Use this for `task` when assigning content pages:
 ```
 修复所有 ERROR 和 WARNING，直到 0 errors, 0 warnings。
 完成后报告已创建的页面文件路径。
+```
+
+### Content Page with Layers Example
+
+```yaml
+pageType: content
+title: "市场分析"
+elements:
+  # Background color block
+  - elementId: bg-split
+    elementType: shape
+    layer: -1
+    bounds: [0, 0, 1280, 288]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+
+  # Decorative number
+  - elementId: deco-01
+    elementType: text
+    layer: -1
+    bounds: [40, 40, 300, 200]
+    opacity: 0.12
+    content: {fontSize: 180, color: "$ink", text: "<p>01</p>"}
+
+  # Card background
+  - elementId: card-bg
+    elementType: shape
+    layer: 0
+    bounds: [80, 320, 500, 280]
+    shapeName: rect
+    fill: {type: solid, color: "$white"}
+    border: {style: solid, width: 1, color: "$textLight"}
+
+  # Card title text
+  - elementId: card-title
+    elementType: text
+    layer: 1
+    bounds: [100, 340, 460, 40]
+    content:
+      fontSize: 24
+      color: "$ink"
+      text: "<p>核心指标</p>"
+      wrap: false
+
+  # Data table
+  - elementId: data-table
+    elementType: table
+    layer: 1
+    bounds: [100, 400, 460, 180]
+    rows:
+      - - content: {text: "指标"}
+        - content: {text: "数值"}
+      - - content: {text: "增长率"}
+        - content: {text: "24%"}
+
+  # Accent line
+  - elementId: accent-top
+    elementType: shape
+    layer: 2
+    bounds: [80, 320, 500, 4]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+
+  # Corner bracket decoration
+  - elementId: corner-bracket
+    elementType: shape
+    layer: 2
+    bounds: [60, 300, 24, 24]
+    shapeName: custom
+    path: "24,24;M0 0 L24 0 L24 4 L4 4 L4 24 L0 24 Z"
+    fill: {type: solid, color: "$primary"}
 ```
 
 ## Subagent Split Strategy

@@ -302,22 +302,22 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from paper-blush base + ink-deep and ink-violet gradient panels + pink script-like swash lines (freeform curves). No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for pink-script"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Elegant pink swash curves (freeform paths) + ink-deep corner flourishes."
     type: "accent"
-    description: "Chapter transition page accent for pink-script"
+    color: "#ED3D8C"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal pink line with small ink-deep heart or dot center."
     type: "divider"
-    description: "Horizontal divider for pink-script"
+    color: "#ED3D8C"
   pattern-grain:
-    file: "decorations/pattern-grain.svg"
+    draw: "Scattered tiny ink-violet dots (opacity: 0.08) across blush background."
     type: "pattern"
-    description: "grain texture pattern for pink-script"
-
+    color: "#0F0D11"
+    opacity: 0.08
+    density: "sparse"
 
 ## Frontend Slides Fixed-Stage Policy
 

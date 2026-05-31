@@ -239,22 +239,22 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from bg and bg-dark textured blocks + green ransom-note style rect patches + black ink splatter shapes (irregular freeform blobs). No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for retro-zine"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Rough black corner brackets (slightly irregular rects) + green center accent."
     type: "accent"
-    description: "Chapter transition page accent for retro-zine"
+    color: "#1A1A1A"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Dashed horizontal black line with green center square."
     type: "divider"
-    description: "Horizontal divider for retro-zine"
+    color: "#1A1A1A"
   pattern-grain:
-    file: "decorations/pattern-grain.svg"
+    draw: "Scattered tiny black dots and short lines (opacity: 0.15) creating zine photocopy grain."
     type: "pattern"
-    description: "grain texture pattern for retro-zine"
-
+    color: "#1A1A1A"
+    opacity: 0.15
+    density: "medium"
 
 ## Frontend Slides Fixed-Stage Policy
 

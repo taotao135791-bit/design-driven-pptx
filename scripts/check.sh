@@ -7,4 +7,10 @@ export PYTHONUTF8=1
 : "${LC_ALL:=C.UTF-8}"; export LC_ALL
 : "${LANG:=C.UTF-8}";   export LANG
 
-exec "$SCRIPT_DIR/runtime/kimi_pptd" check "$@"
+BINARY="$SCRIPT_DIR/runtime/kimi_pptd"
+
+if [ -x "$BINARY" ]; then
+    exec "$BINARY" check "$@"
+else
+    exec python3 "$SCRIPT_DIR/check_pptd.py" "$@"
+fi

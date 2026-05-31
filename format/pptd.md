@@ -97,6 +97,15 @@ interface ElementBase {
   rotation?: number;  // degrees, default 0
   opacity?: number;   // 0-1, default 1
   flip?: [boolean, boolean];  // [horizontal flip, vertical flip], default no flip
+
+  layer?: number;  // Z-Order layer. Default 0.
+                   // Elements with smaller layer values are drawn first (bottom),
+                   // elements with larger layer values are drawn last (top).
+                   // Recommended convention:
+                   //   layer: -1 = background (solid color blocks, background patterns)
+                   //   layer: 0  = default (mid-ground cards, containers)
+                   //   layer: 1  = content (text, charts, tables, images)
+                   //   layer: 2  = foreground (accent lines, corner brackets, labels, badges)
 }
 
 type Element = Text | Shape | Image | Icon | Table | Chart;

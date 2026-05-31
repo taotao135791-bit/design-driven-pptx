@@ -308,18 +308,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from cream and cream-2 layered blocks + green accent geometric shapes + ink text watermark. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for creative-mode"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from green lines + ink inner accent."
     type: "accent"
-    description: "Chapter transition page accent for creative-mode"
+    color: "#1F8A4C"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal green line with small ink circle center."
     type: "divider"
-    description: "Horizontal divider for creative-mode"
-
+    color: "#1F8A4C"
 
 ## Frontend Slides Fixed-Stage Policy
 

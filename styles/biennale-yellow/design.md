@@ -224,18 +224,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from layered sun and sun-soft color blocks + subtle haze gradient overlays. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for biennale-yellow"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Large soft sun circle (ellipse) partially off-canvas + thin haze line beneath title."
     type: "accent"
-    description: "Chapter transition page accent for biennale-yellow"
+    color: "#F1EE2E"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal line with center sun dot: two paper-deep lines on sides + small sun circle in center."
     type: "divider"
-    description: "Horizontal divider for biennale-yellow"
-
+    color: "#F1EE2E"
 
 ## Frontend Slides Fixed-Stage Policy
 

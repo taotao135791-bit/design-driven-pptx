@@ -273,22 +273,23 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from paper and paper-dk blocks + red and pink cherry-petal shapes (small ellipses with slight rotation) + ink accent lines. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for sakura-chroma"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from ink lines + pink petal center accents."
     type: "accent"
-    description: "Chapter transition page accent for sakura-chroma"
+    color: "#3A2516"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal ink line with red center petal shape."
     type: "divider"
-    description: "Horizontal divider for sakura-chroma"
+    color: "#3A2516"
   pattern-dots:
-    file: "decorations/pattern-dots.svg"
+    draw: "Small red and pink circles (diameter 4px, opacity: 0.20) in a regular dot grid. Spacing ~24px."
     type: "pattern"
-    description: "dots texture pattern for sakura-chroma"
-
+    color: "#E5392A"
+    opacity: 0.20
+    spacing: 24
+    dotSize: 4
 
 ## Frontend Slides Fixed-Stage Policy
 

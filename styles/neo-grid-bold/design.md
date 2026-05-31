@@ -226,22 +226,24 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from paper and bg blocks + bold accent-lemon rectangular bars + ink grid lines. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for neo-grid-bold"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Thick accent-lemon corner brackets + ink inner border."
     type: "accent"
-    description: "Chapter transition page accent for neo-grid-bold"
+    color: "#E6FF3D"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Bold horizontal ink line with accent-lemon center square."
     type: "divider"
-    description: "Horizontal divider for neo-grid-bold"
+    color: "#0A0A0A"
+    accentColor: "#E6FF3D"
   pattern-grid:
-    file: "decorations/pattern-grid.svg"
+    draw: "Thin muted horizontal and vertical lines (1px, opacity: 0.12) forming a grid. Spacing ~56px."
     type: "pattern"
-    description: "grid texture pattern for neo-grid-bold"
-
+    color: "#8A8A85"
+    opacity: 0.12
+    spacing: 56
+    lineWidth: 1
 
 ## Frontend Slides Fixed-Stage Policy
 

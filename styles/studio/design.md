@@ -149,18 +149,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from near-black base + acid-yellow bold geometric bars + near-black-alt grid lines + subtle text watermark. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for studio"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Thick acid-yellow corner brackets + near-black inner border."
     type: "accent"
-    description: "Chapter transition page accent for studio"
+    color: "#F5D200"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal acid-yellow line (3px) with near-black center square."
     type: "divider"
-    description: "Horizontal divider for studio"
-
+    color: "#F5D200"
 
 ## Frontend Slides Fixed-Stage Policy
 

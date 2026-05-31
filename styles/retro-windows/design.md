@@ -238,18 +238,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from bg-gray and bg-light blocks + white and black beveled window frames (overlapping rects with offsets) + title-bar accents. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for retro-windows"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Beveled corner frame from gray, white, and dark rects simulating 3D window border."
     type: "accent"
-    description: "Chapter transition page accent for retro-windows"
+    color: "#c0c0c0"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal gray line with inset shadow effect (overlapping light and dark rects)."
     type: "divider"
-    description: "Horizontal divider for retro-windows"
-
+    color: "#808080"
 
 ## Frontend Slides Fixed-Stage Policy
 

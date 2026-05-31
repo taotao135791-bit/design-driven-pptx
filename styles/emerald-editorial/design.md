@@ -274,18 +274,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from bg/b-2/b-3 emerald gradient blocks + ink-blue geometric lines + decorative text watermark. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for emerald-editorial"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from ink-blue lines + emerald center dot."
     type: "accent"
-    description: "Chapter transition page accent for emerald-editorial"
+    color: "#0F1A5C"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal ink-blue line with emerald center square."
     type: "divider"
-    description: "Horizontal divider for emerald-editorial"
-
+    color: "#0F1A5C"
 
 ## Frontend Slides Fixed-Stage Policy
 

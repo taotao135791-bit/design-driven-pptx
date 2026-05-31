@@ -323,18 +323,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from soft bg gradient blocks + primary blue geometric lines + subtle text watermark at low opacity. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for blue-professional"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from thin primary-blue lines + center vertical accent bar."
     type: "accent"
-    description: "Chapter transition page accent for blue-professional"
+    color: "#1e2bfa"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal primary-blue line with small center diamond (rotated square)."
     type: "divider"
-    description: "Horizontal divider for blue-professional"
-
+    color: "#1e2bfa"
 
 ## Frontend Slides Fixed-Stage Policy
 

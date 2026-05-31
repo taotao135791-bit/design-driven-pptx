@@ -268,18 +268,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from paper and paper-2 soft blocks + ink and pink accent curves + subtle watercolor-like overlays (low-opacity rounded rects). No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for soft-editorial"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Soft pink curved corner brackets (rounded rects) + ink center line."
     type: "accent"
-    description: "Chapter transition page accent for soft-editorial"
+    color: "#E1A4C2"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal ink line (2px) with pink center dot."
     type: "divider"
-    description: "Horizontal divider for soft-editorial"
-
+    color: "#2A241B"
 
 ## Frontend Slides Fixed-Stage Policy
 

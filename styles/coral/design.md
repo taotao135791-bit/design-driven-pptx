@@ -259,25 +259,26 @@ components:
 
 decorations:
   pattern-hatch:
-    file: "decorations/pattern-hatch.svg"
+    draw: "Multiple thin rotated rectangles (shapeName: rect, rotation: 45, height: 2, opacity: 0.06) tiled across coral regions. Spacing ~20px between lines."
     type: "pattern"
-    description: "45° diagonal hatch pattern in 6%-opacity black. Tileable SVG for coral region overlays."
-    usage: "Use as shape fill (type: image) or background overlay on coral regions."
+    color: "#000000"
+    opacity: 0.06
+    spacing: 20
+    lineWidth: 2
+    angle: 45
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from solid coral top-section + cream bottom-section + zigzag freeform line + accent rules + oversized decorative circles (low opacity). No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background with coral top-section, zigzag line, accent rules, and oversized circles."
-    usage: "Place as full-slide background image on cover.page."
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from coral rect shapes + center horizontal line + decorative coral dots."
     type: "accent"
-    description: "Chapter transition page accent — coral corner brackets, center line, and decorative dots."
-    usage: "Overlay on chapter pages at 30-50% opacity as decorative frame."
+    color: "#E85D5D"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal ink-black line with coral center dot: two black rect lines on sides + small coral circle in center."
     type: "divider"
-    description: "Horizontal divider with coral center dot and ink lines."
-    usage: "Use between content sections on content pages."
+    color: "#1A1A1A"
+    accentColor: "#E85D5D"
+
 ---
 
 ## Frontend Slides Fixed-Stage Policy

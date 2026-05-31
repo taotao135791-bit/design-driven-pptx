@@ -253,18 +253,17 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from bold black and offwhite blocks + pink and blue accent rectangles arranged in grid-like segments. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for block-frame"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Thick black corner brackets from rect shapes + pink inner line + blue dot accent."
     type: "accent"
-    description: "Chapter transition page accent for block-frame"
+    color: "#FE90E8"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal black line (3px) with pink center rectangle (8px wide)."
     type: "divider"
-    description: "Horizontal divider for block-frame"
-
+    color: "#000000"
+    accentColor: "#FE90E8"
 
 ## Frontend Slides Fixed-Stage Policy
 

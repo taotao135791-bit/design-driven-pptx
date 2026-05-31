@@ -198,18 +198,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from green-deep base + green-lite leaf shapes (custom freeform paths) + pink flower accents. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for editorial-forest"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from green-lite lines + pink center bud (small ellipse)."
     type: "accent"
-    description: "Chapter transition page accent for editorial-forest"
+    color: "#3a5a36"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal green-lite line with small pink center leaf shape."
     type: "divider"
-    description: "Horizontal divider for editorial-forest"
-
+    color: "#3a5a36"
 
 ## Frontend Slides Fixed-Stage Policy
 

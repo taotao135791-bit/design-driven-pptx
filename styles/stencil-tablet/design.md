@@ -308,18 +308,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from bone and paper blocks + black stencil-like geometric cutouts (sharp-angled freeform paths) + sienna accent lines. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for stencil-tablet"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from black sharp-angled paths (stencil style) + sienna center dash."
     type: "accent"
-    description: "Chapter transition page accent for stencil-tablet"
+    color: "#000000"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal black line with sienna center diamond."
     type: "divider"
-    description: "Horizontal divider for stencil-tablet"
-
+    color: "#000000"
 
 ## Frontend Slides Fixed-Stage Policy
 

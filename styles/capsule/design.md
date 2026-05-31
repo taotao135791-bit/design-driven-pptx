@@ -236,18 +236,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from cream base + coral capsule-shaped rounded rectangles + ink outline strokes. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for capsule"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Large coral rounded rectangle frame (capsule shape) with white inner stroke."
     type: "accent"
-    description: "Chapter transition page accent for capsule"
+    color: "#E85D4E"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal coral line with small white pill/capsule shape in center."
     type: "divider"
-    description: "Horizontal divider for capsule"
-
+    color: "#E85D4E"
 
 ## Frontend Slides Fixed-Stage Policy
 

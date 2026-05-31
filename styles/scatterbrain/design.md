@@ -219,22 +219,23 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from yellow, blue, and pink diagonal or scattered color blocks + playful scribble lines (freeform). No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for scatterbrain"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from yellow-deep lines + blue center dot + pink accent."
     type: "accent"
-    description: "Chapter transition page accent for scatterbrain"
+    color: "#ffd43b"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Wavy horizontal line (freeform) with alternating color dashes."
     type: "divider"
-    description: "Horizontal divider for scatterbrain"
+    color: "#ffe066"
   pattern-dots:
-    file: "decorations/pattern-dots.svg"
+    draw: "Scattered small yellow, blue, and pink circles (diameter 5-8px, opacity: 0.30) in playful random layout."
     type: "pattern"
-    description: "dots texture pattern for scatterbrain"
-
+    color: "#ffe066"
+    opacity: 0.30
+    spacing: "random"
+    dotSize: 6
 
 ## Frontend Slides Fixed-Stage Policy
 

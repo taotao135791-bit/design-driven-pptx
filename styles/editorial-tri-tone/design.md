@@ -286,18 +286,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from pink, butter, and burgundy diagonal or vertical color bands + subtle geometric overlays. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for editorial-tri-tone"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from burgundy lines + butter inner line + pink center dot."
     type: "accent"
-    description: "Chapter transition page accent for editorial-tri-tone"
+    color: "#7A1F35"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal burgundy line with butter center dash."
     type: "divider"
-    description: "Horizontal divider for editorial-tri-tone"
-
+    color: "#7A1F35"
 
 ## Frontend Slides Fixed-Stage Policy
 

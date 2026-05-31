@@ -323,18 +323,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from large red and dark diagonal color blocks + cream text watermark. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for bold-poster"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Thick red corner brackets from rect shapes + cream inner border line."
     type: "accent"
-    description: "Chapter transition page accent for bold-poster"
+    color: "#D8000F"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Bold horizontal red line (4px) with small dark circle center."
     type: "divider"
-    description: "Horizontal divider for bold-poster"
-
+    color: "#D8000F"
 
 ## Frontend Slides Fixed-Stage Policy
 

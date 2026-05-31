@@ -80,6 +80,129 @@ When the checker reports TextOverflowWarning, fix in the order suggested by the 
 > **Do not excessively reduce font size to eliminate overflow, causing large blank areas within the text box** -- this is worse for aesthetics than slight overflow.
 
 
+## Programmatic Decorations (MUST FOLLOW)
+
+- **Subagents MUST NOT reference external SVG/PNG files for decorations.** All decorative elements must be composed from native `shape` and `text` elements.
+- Use `opacity` for subtle textures and overlays (0.06–0.15 for background textures, 0.3–0.5 for accents).
+- Use `shapeName: custom` + `path` for geometric decorative shapes (e.g., L-shaped corner brackets, custom frames).
+- Use `shadow` for offset shadows; set `blur: 0` for hard shadows.
+- When `design.md` defines a `decorations:` section, it describes **HOW to draw** — not file paths. Translate each decorative intent into native shapes and text elements.
+
+## Z-Order and Element Ordering (MUST FOLLOW)
+
+PPTD uses the `elements` array order to determine Z-order: **elements later in the array appear on top of earlier elements.** Occlusion (text blocked by shapes, cards covering content) is a critical visual defect and must be prevented systematically.
+
+### ⚠️ MANDATORY CHECK: Every Element MUST Have `layer`
+
+**Every element MUST have an explicit `layer` field. No exceptions.**
+
+Without `layer`, the converter relies on array order and heuristics. This frequently causes text to be occluded by background shapes, cards to cover content, or decorations to render behind text. The checker will report these as warnings, but you should prevent them entirely by setting `layer` on every element.
+
+**Before/After Example:**
+
+```yaml
+# ❌ WRONG — text gets occluded by background shape
+- elementId: bg
+  elementType: shape
+  bounds: [0, 0, 1280, 720]
+  shapeName: rect
+  fill: {type: solid, color: "#E85D5D"}
+- elementId: title
+  elementType: text
+  bounds: [80, 100, 600, 80]
+  content: {fontSize: 48, text: "<p>Title</p>"}
+
+# ✅ CORRECT — explicit layer ensures correct z-order
+- elementId: bg
+  elementType: shape
+  layer: -1
+  bounds: [0, 0, 1280, 720]
+  shapeName: rect
+  fill: {type: solid, color: "#E85D5D"}
+- elementId: title
+  elementType: text
+  layer: 1
+  bounds: [80, 100, 600, 80]
+  content: {fontSize: 48, text: "<p>Title</p>"}
+```
+
+**Checklist:** Before submitting .page files, verify every element has `layer: N`.
+
+### The `layer` Field
+
+The converter automatically sorts elements by `layer` before rendering, ensuring correct Z-order regardless of array order.
+
+| layer | Purpose | Examples |
+|-------|---------|----------|
+| **-1** | Background | Full-screen color blocks, background patterns, scanlines, grid overlays, large decorative numerals at low opacity |
+| **0** | Mid-ground (default) | Card backgrounds, container shapes, sidebar panels, dividers |
+| **1** | Content | Text boxes, charts, tables, images, icons |
+| **2** | Foreground | Accent lines, corner brackets, labels, badges, pills, small decorative marks |
+
+**Penalty note:** Pages without `layer` fields will fail checker validation.
+
+### Explicit Layer Values for Common Patterns
+
+| Element Type | Recommended `layer` |
+|--------------|---------------------|
+| Full-screen background color blocks | `layer: -1` |
+| Decorative numbers/text at low opacity | `layer: -1` |
+| Card/container backgrounds | `layer: 0` |
+| Text, charts, tables, images | `layer: 1` |
+| Accent lines, corner brackets, labels | `layer: 2` |
+
+### Best Practices
+
+1. **Always set `layer` explicitly** on background shapes and foreground decorations. This is the single most reliable way to prevent occlusion.
+2. **Background first**: Any shape that fills a large portion of the slide (color regions, panels) must have `layer: -1`.
+3. **Content second**: Text, charts, tables should have `layer: 1`.
+4. **Foreground last**: Small decorative chrome (accent lines, corner brackets, label pills) should have `layer: 2`.
+5. **When in doubt, use `layer: 1` for text**: If a text box is being occluded by a shape, explicitly add `layer: 1` to the text element.
+
+### Example
+
+```yaml
+elements:
+  # Background coral panel — must be at the bottom
+  - elementId: bg-coral
+    elementType: shape
+    layer: -1
+    bounds: [0, 0, 1280, 288]
+    shapeName: rect
+    fill: {type: solid, color: "#E85D5D"}
+
+  # Decorative number — behind content
+  - elementId: deco-num
+    elementType: text
+    layer: -1
+    bounds: [40, 40, 300, 200]
+    opacity: 0.12
+    content: {fontSize: 180, color: "#1A1A1A", text: "<p>01</p>"}
+
+  # Card background
+  - elementId: card-bg
+    elementType: shape
+    layer: 0
+    bounds: [80, 320, 500, 280]
+    shapeName: rect
+    fill: {type: solid, color: "#FFFFFF"}
+
+  # Content text — on top of background
+  - elementId: title
+    elementType: text
+    layer: 1
+    bounds: [100, 340, 460, 80]
+    content: {fontSize: 48, color: "#1A1A1A", text: "<p>Title</p>"}
+
+  # Accent line — on very top
+  - elementId: accent
+    elementType: shape
+    layer: 2
+    bounds: [100, 440, 80, 4]
+    shapeName: rect
+    fill: {type: solid, color: "#E85D5D"}
+```
+
 ## Deliver the Presentation
 - After completion, inform the main agent which pages you have completed and where they are located, so the main agent can continue execution.
 

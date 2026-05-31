@@ -244,22 +244,23 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from paper to paper-d gradient blocks + ink-red accent lines + subtle table-row lines. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for long-table"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from ink-red lines + paper center line."
     type: "accent"
-    description: "Chapter transition page accent for long-table"
+    color: "#B53D2A"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal ink-red line with small paper circle center."
     type: "divider"
-    description: "Horizontal divider for long-table"
+    color: "#B53D2A"
   pattern-dots:
-    file: "decorations/pattern-dots.svg"
+    draw: "Small ink-red circles (diameter 3px, opacity: 0.20) in a regular dot grid. Spacing ~32px."
     type: "pattern"
-    description: "dots texture pattern for long-table"
-
+    color: "#B53D2A"
+    opacity: 0.20
+    spacing: 32
+    dotSize: 3
 
 ## Frontend Slides Fixed-Stage Policy
 

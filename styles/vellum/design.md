@@ -192,18 +192,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from navy and navy-alt gradient blocks + yellow accent lines + subtle geometric watermark. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for vellum"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from yellow lines on navy bg + navy-mid center dot."
     type: "accent"
-    description: "Chapter transition page accent for vellum"
+    color: "#E8D85C"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal yellow line with navy-deep center circle."
     type: "divider"
-    description: "Horizontal divider for vellum"
-
+    color: "#E8D85C"
 
 ## Frontend Slides Fixed-Stage Policy
 

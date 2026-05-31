@@ -194,22 +194,24 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from black and white bold blocks + pink and green accent rectangles in raw grid arrangement. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for raw-grid"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Thick black corner brackets + pink inner line + green dot accent."
     type: "accent"
-    description: "Chapter transition page accent for raw-grid"
+    color: "#000000"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal black line (3px) with pink center rectangle."
     type: "divider"
-    description: "Horizontal divider for raw-grid"
+    color: "#000000"
+    accentColor: "#F2D4CF"
   pattern-grid:
-    file: "decorations/pattern-grid.svg"
+    draw: "Thin gray horizontal and vertical lines (1px, opacity: 0.15) forming a regular grid. Spacing ~40px."
     type: "pattern"
-    description: "grid texture pattern for raw-grid"
-
+    color: "#F5F5F5"
+    opacity: 0.15
+    spacing: 40
+    lineWidth: 1
 
 ## Frontend Slides Fixed-Stage Policy
 

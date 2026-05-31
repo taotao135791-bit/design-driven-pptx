@@ -224,22 +224,23 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from paper and paper-2 blocks + bold ink-blue rectangular bars + grid line overlay. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for cobalt-grid"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from ink-blue rect lines + center cobalt dot."
     type: "accent"
-    description: "Chapter transition page accent for cobalt-grid"
+    color: "#1F2BE0"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal ink-blue line with small paper circle center."
     type: "divider"
-    description: "Horizontal divider for cobalt-grid"
+    color: "#1F2BE0"
   pattern-grid:
-    file: "decorations/pattern-grid.svg"
+    draw: "Thin ink-blue horizontal and vertical lines (1px, opacity: 0.10) forming a grid. Spacing ~48px."
     type: "pattern"
-    description: "grid texture pattern for cobalt-grid"
-
+    color: "#1F2BE0"
+    opacity: 0.10
+    spacing: 48
+    lineWidth: 1
 
 ## Frontend Slides Fixed-Stage Policy
 

@@ -195,22 +195,23 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from navy and navy-alt blocks + cream geometric bars + signal-wave freeform curves. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for signal"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from cream lines on navy bg + center signal dot."
     type: "accent"
-    description: "Chapter transition page accent for signal"
+    color: "#F0ECE3"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal cream line with small navy center circle."
     type: "divider"
-    description: "Horizontal divider for signal"
+    color: "#F0ECE3"
   pattern-grid:
-    file: "decorations/pattern-grid.svg"
+    draw: "Thin cream horizontal and vertical lines (1px, opacity: 0.10) forming a grid. Spacing ~48px."
     type: "pattern"
-    description: "grid texture pattern for signal"
-
+    color: "#F0ECE3"
+    opacity: 0.10
+    spacing: 48
+    lineWidth: 1
 
 ## Frontend Slides Fixed-Stage Policy
 

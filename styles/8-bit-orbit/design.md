@@ -228,22 +228,22 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from solid dark-void regions + neon-cyan accent lines + scattered small neon-pink squares. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for 8-bit-orbit"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner pixel brackets from small neon-cyan rectangles + center neon-pink cross shape."
     type: "accent"
-    description: "Chapter transition page accent for 8-bit-orbit"
+    color: "#5EDCF4"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal line made of small neon-cyan squares (pixel-dash effect) with neon-pink center accent."
     type: "divider"
-    description: "Horizontal divider for 8-bit-orbit"
+    color: "#5EDCF4"
   pattern-starfield:
-    file: "decorations/pattern-starfield.svg"
+    draw: "Scattered tiny neon-yellow and neon-cyan rectangles (1-2px) and small crosses across the region at low opacity."
     type: "pattern"
-    description: "starfield texture pattern for 8-bit-orbit"
-
+    color: "#F4D03F"
+    opacity: 0.25
+    density: "sparse"
 
 ## Frontend Slides Fixed-Stage Policy
 

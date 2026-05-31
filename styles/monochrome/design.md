@@ -175,18 +175,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from cream-paper base + ink-black geometric blocks + subtle typographic watermark at low opacity. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for monochrome"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from ink-black lines + cream-warm inner line."
     type: "accent"
-    description: "Chapter transition page accent for monochrome"
+    color: "#1A1A16"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal ink-black line (2px) with cream-paper center dash."
     type: "divider"
-    description: "Horizontal divider for monochrome"
-
+    color: "#1A1A16"
 
 ## Frontend Slides Fixed-Stage Policy
 

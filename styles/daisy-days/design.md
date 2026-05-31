@@ -205,22 +205,23 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from cream base + soft daisy shapes (yellow circles with white petals drawn as small rects/ellipses) + turquoise accent bands. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for daisy-days"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Soft-pink rounded petal shapes arranged as corner flowers + butter center dot."
     type: "accent"
-    description: "Chapter transition page accent for daisy-days"
+    color: "#F7C8D4"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal turquoise line with small butter daisy shape in center."
     type: "divider"
-    description: "Horizontal divider for daisy-days"
+    color: "#7ECDC0"
   pattern-dots:
-    file: "decorations/pattern-dots.svg"
+    draw: "Small soft-pink and butter circles (diameter 4-6px, opacity: 0.25) arranged in a regular dot grid. Spacing ~24px."
     type: "pattern"
-    description: "dots texture pattern for daisy-days"
-
+    color: "#F7C8D4"
+    opacity: 0.25
+    spacing: 24
+    dotSize: 5
 
 ## Frontend Slides Fixed-Stage Policy
 

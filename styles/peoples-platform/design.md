@@ -392,22 +392,22 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from blue and blue-deep blocks + orange diagonal bars + red accent shapes + subtle grain texture from tiny dots. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for peoples-platform"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from orange lines + blue center dot."
     type: "accent"
-    description: "Chapter transition page accent for peoples-platform"
+    color: "#F2A03A"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal orange line with red center circle."
     type: "divider"
-    description: "Horizontal divider for peoples-platform"
+    color: "#F2A03A"
   pattern-grain:
-    file: "decorations/pattern-grain.svg"
+    draw: "Scattered tiny blue and orange rectangles (1-2px, opacity: 0.15) creating a noise texture."
     type: "pattern"
-    description: "grain texture pattern for peoples-platform"
-
+    color: "#2C2CDC"
+    opacity: 0.15
+    density: "dense"
 
 ## Frontend Slides Fixed-Stage Policy
 

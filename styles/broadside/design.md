@@ -203,18 +203,16 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from cream base + fire-orange horizontal bars + ink-black typographic watermark. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for broadside"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from fire-orange rectangles + center thin fire-orange rule."
     type: "accent"
-    description: "Chapter transition page accent for broadside"
+    color: "#E85D26"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal fire-orange line (3px) with ink-black center dash."
     type: "divider"
-    description: "Horizontal divider for broadside"
-
+    color: "#E85D26"
 
 ## Frontend Slides Fixed-Stage Policy
 

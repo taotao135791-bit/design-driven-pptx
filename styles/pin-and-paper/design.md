@@ -296,22 +296,22 @@ components:
 ---
 decorations:
   cover-bg:
-    file: "decorations/cover-bg.svg"
+    draw: "Compose from yellow paper base + cream and paper-2 layered blocks + subtle pin-hole dots. No pre-rendered background image."
     type: "background"
-    description: "Cover page decorative background for pin-and-paper"
   chapter-accent:
-    file: "decorations/chapter-accent.svg"
+    draw: "Corner brackets from dark brown lines (derived from paper tones) + red pin dot center."
     type: "accent"
-    description: "Chapter transition page accent for pin-and-paper"
+    color: "#E8D85A"
   divider:
-    file: "decorations/divider.svg"
+    draw: "Horizontal brown line with yellow center dash."
     type: "divider"
-    description: "Horizontal divider for pin-and-paper"
+    color: "#8B7355"
   pattern-grain:
-    file: "decorations/pattern-grain.svg"
+    draw: "Scattered tiny brown dots and short lines (opacity: 0.12) simulating paper grain."
     type: "pattern"
-    description: "grain texture pattern for pin-and-paper"
-
+    color: "#8B7355"
+    opacity: 0.12
+    density: "medium"
 
 ## Frontend Slides Fixed-Stage Policy
 

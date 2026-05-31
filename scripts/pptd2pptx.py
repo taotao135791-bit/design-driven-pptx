@@ -455,6 +455,55 @@ class PPTDConverter:
         h_emu = px_to_emu(h, self.slide_height_emu, self.pptd_h)
         return x_emu, y_emu, w_emu, h_emu
 
+    # ---------------------------------------------------------------------------
+    # Color contrast helpers
+    # ---------------------------------------------------------------------------
+    @staticmethod
+    def _color_luminance(rgb_color):
+        """Calculate relative luminance of an RGBColor."""
+        if rgb_color is None:
+            return 0.0
+        def _c(v):
+            v = v / 255.0
+            return v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4
+        return 0.2126 * _c(rgb_color[0]) + 0.7152 * _c(rgb_color[1]) + 0.0722 * _c(rgb_color[2])
+
+    def _ensure_contrast(self, rgb_color, bg_color, target=3.0):
+        """Adjust a color (lighten or darken) until it achieves target contrast against bg_color.
+        Returns adjusted RGBColor."""
+        if rgb_color is None or bg_color is None:
+            return rgb_color
+        fg_lum = self._color_luminance(rgb_color)
+        bg_lum = self._color_luminance(bg_color)
+        ratio = (max(fg_lum, bg_lum) + 0.05) / (min(fg_lum, bg_lum) + 0.05)
+        if ratio >= target:
+            return rgb_color
+        r, g, b = rgb_color[0], rgb_color[1], rgb_color[2]
+        # Determine direction: if background is bright, darken the color; if dark, lighten it
+        if bg_lum > 0.5:
+            # Darken
+            for _ in range(20):
+                r = max(0, int(r * 0.85) - 5)
+                g = max(0, int(g * 0.85) - 5)
+                b = max(0, int(b * 0.85) - 5)
+                test = RGBColor(r, g, b)
+                test_lum = self._color_luminance(test)
+                new_ratio = (max(test_lum, bg_lum) + 0.05) / (min(test_lum, bg_lum) + 0.05)
+                if new_ratio >= target:
+                    return test
+        else:
+            # Lighten
+            for _ in range(20):
+                r = min(255, int(r * 1.15) + 5)
+                g = min(255, int(g * 1.15) + 5)
+                b = min(255, int(b * 1.15) + 5)
+                test = RGBColor(r, g, b)
+                test_lum = self._color_luminance(test)
+                new_ratio = (max(test_lum, bg_lum) + 0.05) / (min(test_lum, bg_lum) + 0.05)
+                if new_ratio >= target:
+                    return test
+        return RGBColor(r, g, b)
+
     # =====================================================================
     # Animation support
     # =====================================================================
@@ -937,13 +986,20 @@ class PPTDConverter:
         current_para = tf.paragraphs[0]
         first = True
 
+        # Apply base lineHeight to first paragraph before segments
+        base_line_height = base_style.get('lineHeight')
+        if base_line_height is not None:
+            tf.paragraphs[0].line_spacing = base_line_height
+
         for seg in segments:
-            if '\n' in seg.text and not first:
+            if '\n' in seg.text:
                 parts = seg.text.split('\n')
                 for i, part in enumerate(parts):
                     if i > 0:
                         current_para = tf.add_paragraph()
                         current_para.alignment = h_align
+                        if base_line_height is not None:
+                            current_para.line_spacing = base_line_height
                     if part:
                         run = current_para.add_run()
                         run.text = part
@@ -1431,6 +1487,113 @@ class PPTDConverter:
                 if series.marker.style == XL_MARKER_STYLE.NONE:
                     series.marker.style = XL_MARKER_STYLE.AUTOMATIC
 
+    def _apply_chart_theme(self, chart, chartSpace, element):
+        """Apply dark/light theme colors to chart via XML manipulation.
+        Sets transparent backgrounds, text colors, gridline colors, and fonts."""
+        ink_color = self.theme.resolve_color('$ink')
+        text_color = self.theme.resolve_color('$text')
+        text_light_color = self.theme.resolve_color('$textLight')
+        chart_font = self.theme.get_chart_font()
+        
+        def _rgb_hex(color):
+            return f'{color[0]:02X}{color[1]:02X}{color[2]:02X}' if color else 'FFFFFF'
+        
+        ink_hex = _rgb_hex(ink_color)
+        text_hex = _rgb_hex(text_color)
+        text_light_hex = _rgb_hex(text_light_color)
+        
+        # Helper to ensure a child element exists
+        def _ensure_child(parent, tag):
+            child = parent.find(tag)
+            if child is None:
+                child = etree.SubElement(parent, tag)
+            return child
+        
+        # Helper to set text color via txPr/defRPr
+        def _set_tx_color(element, color_hex, font_name=None, font_size_pt=None):
+            txPr = _ensure_child(element, qn('c:txPr'))
+            bodyPr = _ensure_child(txPr, qn('a:bodyPr'))
+            lstStyle = _ensure_child(txPr, qn('a:lstStyle'))
+            p = _ensure_child(txPr, qn('a:p'))
+            pPr = _ensure_child(p, qn('a:pPr'))
+            defRPr = _ensure_child(pPr, qn('a:defRPr'))
+            
+            # Set font color
+            solidFill = _ensure_child(defRPr, qn('a:solidFill'))
+            # Remove existing srgbClr/schemeClr to avoid duplicates
+            for existing in list(solidFill):
+                solidFill.remove(existing)
+            srgbClr = etree.SubElement(solidFill, qn('a:srgbClr'))
+            srgbClr.set('val', color_hex)
+            
+            if font_size_pt:
+                # Size in hundredths of a point
+                defRPr.set('sz', str(int(font_size_pt * 100)))
+            
+            if font_name:
+                # Set Latin font
+                latin = _ensure_child(defRPr, qn('a:latin'))
+                latin.set('typeface', font_name)
+                # Set East Asian font if needed
+                if chart_font and ',' in chart_font:
+                    cjk = chart_font.split(',')[1].strip()
+                    ea = _ensure_child(defRPr, qn('a:ea'))
+                    ea.set('typeface', cjk)
+            
+            endParaRPr = _ensure_child(p, qn('a:endParaRPr'))
+            endParaRPr.set('lang', 'en-US')
+        
+        # Helper to set shape fill
+        def _set_no_fill(element):
+            spPr = _ensure_child(element, qn('c:spPr'))
+            # Remove existing fill children
+            for child in list(spPr):
+                spPr.remove(child)
+            etree.SubElement(spPr, qn('a:noFill'))
+        
+        # 1. ChartSpace background → transparent
+        _set_no_fill(chartSpace)
+        
+        # 2. PlotArea background → transparent
+        plotArea = chartSpace.find('.//' + qn('c:plotArea'))
+        if plotArea is not None:
+            _set_no_fill(plotArea)
+        
+        # 3. Legend text color (small size to avoid crowding)
+        legend = chartSpace.find('.//' + qn('c:legend'))
+        if legend is not None:
+            _set_tx_color(legend, text_hex, chart_font, font_size_pt=9)
+        
+        # 4. Title text color
+        title = chartSpace.find('.//' + qn('c:title'))
+        if title is not None:
+            _set_tx_color(title, ink_hex, chart_font, font_size_pt=12)
+        
+        # 5. Axis text colors and gridlines
+        if plotArea is not None:
+            for axis_tag in (qn('c:catAx'), qn('c:valAx'), qn('c:dateAx')):
+                for axis in plotArea.findall(axis_tag):
+                    _set_tx_color(axis, text_hex, chart_font, font_size_pt=9)
+                    # Gridlines
+                    for grid_tag in (qn('c:majorGridlines'), qn('c:minorGridlines')):
+                        grid = axis.find(grid_tag)
+                        if grid is not None:
+                            g_spPr = _ensure_child(grid, qn('c:spPr'))
+                            # Remove existing children
+                            for child in list(g_spPr):
+                                g_spPr.remove(child)
+                            ln = etree.SubElement(g_spPr, qn('a:ln'))
+                            ln.set('w', '6350')  # 0.5pt
+                            solidFill = etree.SubElement(ln, qn('a:solidFill'))
+                            srgbClr = etree.SubElement(solidFill, qn('a:srgbClr'))
+                            srgbClr.set('val', text_light_hex)
+        
+        # 6. Data labels text color (small size so they don't crowd the chart)
+        for series in chart.series:
+            dLbls = series._element.find(qn('c:dLbls'))
+            if dLbls is not None:
+                _set_tx_color(dLbls, ink_hex, chart_font, font_size_pt=8)
+    
     def _add_chart(self, slide, element):
         """Render a real chart using python-pptx chart API.
         Supports two data formats:
@@ -1529,13 +1692,28 @@ class PPTDConverter:
                 palette = self.theme.get_color_palette()
                 colors = [f"#{c[0]:02X}{c[1]:02X}{c[2]:02X}" for c in palette]
 
+            # Resolve background color for contrast checking
+            bg_color = self.theme.resolve_color('$background')
+            
             if colors and hasattr(chart, 'series'):
                 for idx, series in enumerate(chart.series):
                     color_idx = idx % len(colors)
                     color = self.theme.resolve_color(colors[color_idx])
                     if color:
+                        # Ensure color has enough contrast against background (target 3:1 for chart fills)
+                        safe_color = self._ensure_contrast(color, bg_color, target=3.0)
                         series.format.fill.solid()
-                        series.format.fill.fore_color.rgb = color
+                        series.format.fill.fore_color.rgb = safe_color
+                    
+                    # For single-series charts (pie, bar), color each point with a different theme color
+                    if len(chart.series) == 1:
+                        for p_idx, point in enumerate(series.points):
+                            point_color_idx = p_idx % len(colors)
+                            point_color = self.theme.resolve_color(colors[point_color_idx])
+                            if point_color:
+                                safe_point_color = self._ensure_contrast(point_color, bg_color, target=3.0)
+                                point.format.fill.solid()
+                                point.format.fill.fore_color.rgb = safe_point_color
 
             # Apply theme font to chart
             chart_font = self.theme.get_chart_font()
@@ -1583,6 +1761,8 @@ class PPTDConverter:
             legend = element.get('legend', True)
             if legend is False:
                 chart.has_legend = False
+            elif legend is True:
+                chart.has_legend = True
             elif isinstance(legend, dict):
                 chart.has_legend = legend.get('show', True)
                 if chart.has_legend and legend.get('position'):
@@ -1593,14 +1773,38 @@ class PPTDConverter:
                                'right': XL_LEGEND_POSITION.RIGHT}
                     chart.legend.position = pos_map.get(legend['position'], XL_LEGEND_POSITION.BOTTOM)
 
+            # Auto-enable data labels by default so charts are immediately readable
             data_labels = element.get('dataLabels')
-            if data_labels and isinstance(data_labels, dict):
-                if data_labels.get('show'):
-                    for series in chart.series:
-                        series.has_data_labels = True
-                        if data_labels.get('content') == 'percentage':
-                            from pptx.enum.chart import XL_LABEL_POSITION
-                            pass
+            show_labels = True
+            if data_labels is False:
+                show_labels = False
+            elif isinstance(data_labels, dict) and data_labels.get('show') is False:
+                show_labels = False
+            
+            if show_labels:
+                for series in chart.series:
+                    # Manually add data labels via XML (works for all chart types)
+                    dLbls = series._element.find(qn('c:dLbls'))
+                    if dLbls is None:
+                        dLbls = etree.SubElement(series._element, qn('c:dLbls'))
+                    
+                    # Clear existing children
+                    for child in list(dLbls):
+                        dLbls.remove(child)
+                    
+                    if chart_type == 'pie':
+                        etree.SubElement(dLbls, qn('c:showVal')).set('val', '0')
+                        etree.SubElement(dLbls, qn('c:showPercent')).set('val', '1')
+                    else:
+                        etree.SubElement(dLbls, qn('c:showVal')).set('val', '1')
+                        etree.SubElement(dLbls, qn('c:showPercent')).set('val', '0')
+                    
+                    etree.SubElement(dLbls, qn('c:showCatName')).set('val', '0')
+                    etree.SubElement(dLbls, qn('c:showSerName')).set('val', '0')
+                    etree.SubElement(dLbls, qn('c:showLegendKey')).set('val', '0')
+            
+            # Apply theme styling (background, text colors, gridlines)
+            self._apply_chart_theme(chart, chart._chartSpace, element)
 
             if chart_type == 'pie' and isinstance(options, dict):
                 inner_radius = options.get('innerRadius')
@@ -1647,21 +1851,17 @@ class PPTDConverter:
             if result is not None:
                 return result
 
-        # Fallback: placeholder text
+        # Fallback: render a simple geometric placeholder shape with no text
         shape = slide.shapes.add_shape(
-            MSO_SHAPE.RECTANGLE, Emu(x), Emu(y), Emu(w), Emu(h)
+            MSO_SHAPE.OVAL, Emu(x), Emu(y), Emu(w), Emu(h)
         )
         fill_spec = element.get('fill')
         if fill_spec:
             self._apply_fill(shape, fill_spec)
-
-        tf = shape.text_frame
-        tf.word_wrap = True
-        p = tf.paragraphs[0]
-        p.alignment = PP_ALIGN.CENTER
-        run = p.add_run()
-        run.text = f"[{icon_name}]"
-        run.font.size = Pt(12)
+        else:
+            shape.fill.solid()
+            shape.fill.fore_color.rgb = self.theme.resolve_color('$primary') or RGBColor(128, 128, 128)
+        shape.line.fill.background()
 
         self._apply_animation(slide, shape, element)
         return shape
@@ -1772,6 +1972,17 @@ class PPTDConverter:
 
     def convert_page(self, slide, page_data):
         """Convert a single .page data dict to a slide."""
+        # Support both 'bgColor' (string, e.g. "$background" or "#FFFFFF")
+        # and 'background' (dict, e.g. {type: solid, color: "..."})
+        bg_color = page_data.get('bgColor')
+        if bg_color:
+            resolved = self.theme.resolve_color(bg_color)
+            if resolved:
+                background = slide.background
+                fill = background.fill
+                fill.solid()
+                fill.fore_color.rgb = resolved
+        
         bg = page_data.get('background')
         if bg:
             self._set_background(slide, bg)

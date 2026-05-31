@@ -20,46 +20,46 @@ colors:
 textStyles:
   heroTitle:
     fontSize: 64
-    color: "{{ink}}"
+    color: "$ink"
     fontFamily: "Montserrat, Noto Sans SC"
     lineHeight: 1.05
     letterSpacing: 3
   sectionHeadline:
     fontSize: 48
-    color: "{{ink}}"
+    color: "$ink"
     fontFamily: "Montserrat, Noto Sans SC"
     lineHeight: 1.05
     letterSpacing: 1
   columnTitle:
     fontSize: 28
-    color: "{{ink}}"
+    color: "$ink"
     fontFamily: "Montserrat, Noto Sans SC"
     lineHeight: 1.1
     letterSpacing: 1
   cardTitle:
     fontSize: 24
-    color: "{{ink}}"
+    color: "$ink"
     fontFamily: "Montserrat, Noto Sans SC"
     lineHeight: 1.1
     letterSpacing: 1
   statNumeral:
     fontSize: 56
-    color: "{{primary}}"
+    color: "$primary"
     fontFamily: "Montserrat, Noto Sans SC"
     lineHeight: 1.0
   body:
     fontSize: 18
-    color: "{{text}}"
+    color: "$text"
     fontFamily: "Open Sans, Noto Sans SC"
     lineHeight: 1.7
   bodySm:
     fontSize: 15
-    color: "{{text}}"
+    color: "$text"
     fontFamily: "Open Sans, Noto Sans SC"
     lineHeight: 1.6
   sectionLabel:
     fontSize: 12
-    color: "{{primary}}"
+    color: "$primary"
     fontFamily: "Open Sans, Noto Sans SC"
     lineHeight: 1.0
     letterSpacing: 4
@@ -72,15 +72,15 @@ tableStyles:
   default:
     fontSize: 15
     fontFamily: "Open Sans, Noto Sans SC"
-    headerFill: "{{primary}}"
-    headerColor: "{{white}}"
+    headerFill: "$primary"
+    headerColor: "$white"
     headerBold: true
-    bodyFill: ["{{white}}", "{{background}}"]
-    bodyColor: "{{ink}}"
+    bodyFill: ["$white", "$background"]
+    bodyColor: "$ink"
     border:
       style: solid
       width: 2
-      color: "{{ink}}"
+      color: "$ink"
 ```
 
 ## Decoration Grammar

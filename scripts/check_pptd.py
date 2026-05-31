@@ -14,6 +14,20 @@ from pathlib import Path
 import yaml
 
 # ---------------------------------------------------------------------------
+# Color helpers (inline to avoid import path issues)
+# ---------------------------------------------------------------------------
+def _luminance(hex_color):
+    hex_color = hex_color.lstrip('#')
+    r = int(hex_color[0:2], 16) / 255.0
+    g = int(hex_color[2:4], 16) / 255.0
+    b = int(hex_color[4:6], 16) / 255.0
+    r = r / 12.92 if r <= 0.03928 else ((r + 0.055) / 1.055) ** 2.4
+    g = g / 12.92 if g <= 0.03928 else ((g + 0.055) / 1.055) ** 2.4
+    b = b / 12.92 if b <= 0.03928 else ((b + 0.055) / 1.055) ** 2.4
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+# ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
 DEFAULT_CANVAS = (1280, 720)
@@ -450,6 +464,8 @@ class Checker:
         self.check_data_visualization_opportunity(
             page_ref, page_type, valid_elements
         )
+        self.check_chart_annotations(page_ref, valid_elements)
+        self.check_text_contrast(page_ref, valid_elements)
         self.check_layout_quality(page_ref, valid_elements)
 
         # Collect card info for cross-page consistency
@@ -844,6 +860,102 @@ class Checker:
     def is_minimal_style(self) -> bool:
         path_parts = set(self.pptd_path.parts)
         return bool(path_parts & MINIMAL_STYLES)
+
+    def _resolve_color(self, color_str: str) -> str | None:
+        """Resolve a color reference ($primary) to its hex value."""
+        if not color_str or not isinstance(color_str, str):
+            return None
+        if color_str.startswith('$'):
+            key = color_str[1:]
+            return self.theme_colors.get(key, color_str)
+        if color_str.startswith('#'):
+            return color_str
+        return None
+
+    def check_chart_annotations(self, page_ref: str, elements: list):
+        """Warn if charts lack titles, legends, or data labels."""
+        for elem in elements:
+            if elem.get('elementType') != 'chart':
+                continue
+            eid = elem.get('elementId', '<unknown>')
+            title = elem.get('title')
+            legend = elem.get('legend', True)
+            data_labels = elem.get('dataLabels')
+            has_annotation = bool(title) or (legend is not False) or (data_labels is not False)
+            if not has_annotation:
+                self.log(
+                    page_ref,
+                    "WARNING",
+                    f"Chart '{eid}' lacks title, legend, or data labels — viewers won't understand the data",
+                )
+
+    def check_text_contrast(self, page_ref: str, elements: list):
+        """Warn if text colors may have insufficient contrast against backgrounds."""
+        # Determine effective background color for the page
+        bg_color_str = None
+        for elem in elements:
+            if elem.get('elementType') == 'shape' and elem.get('bounds', [0, 0, 0, 0]) == [0, 0, self.canvas_w, self.canvas_h]:
+                fill = elem.get('fill', {})
+                if isinstance(fill, dict) and fill.get('type') == 'solid':
+                    bg_color_str = fill.get('color')
+                    break
+        # Fallback to page background or theme background
+        if not bg_color_str:
+            for elem in elements:
+                bg = elem.get('bgColor') or elem.get('background')
+                if isinstance(bg, str):
+                    bg_color_str = bg
+                    break
+        if not bg_color_str:
+            bg_color_str = self.theme_colors.get('background', '#FFFFFF')
+        
+        bg_hex = self._resolve_color(bg_color_str)
+        if not bg_hex or not bg_hex.startswith('#'):
+            return
+        
+        try:
+            bg_lum = _luminance(bg_hex)
+        except Exception:
+            return
+        
+        for elem in elements:
+            if elem.get('elementType') not in ('text', 'shape', 'table'):
+                continue
+            eid = elem.get('elementId', '<unknown>')
+            
+            # Determine effective background for this element
+            # Default to slide background; if element is a shape with its own fill, use that
+            current_bg_hex = bg_hex
+            current_bg_lum = bg_lum
+            if elem.get('elementType') == 'shape':
+                fill = elem.get('fill', {})
+                if isinstance(fill, dict) and fill.get('type') == 'solid':
+                    resolved = self._resolve_color(fill.get('color'))
+                    if resolved and resolved.startswith('#'):
+                        try:
+                            current_bg_hex = resolved
+                            current_bg_lum = _luminance(current_bg_hex)
+                        except Exception:
+                            pass
+            
+            # Check text color
+            content = elem.get('content', {})
+            if isinstance(content, dict):
+                color_str = content.get('color')
+                if color_str:
+                    resolved = self._resolve_color(color_str)
+                    if resolved and resolved.startswith('#'):
+                        try:
+                            text_lum = _luminance(resolved)
+                            ratio = (max(text_lum, current_bg_lum) + 0.05) / (min(text_lum, current_bg_lum) + 0.05)
+                            if ratio < 3.0:
+                                self.log(
+                                    page_ref,
+                                    "WARNING",
+                                    f"Element '{eid}' text color ({resolved}) may have poor contrast ({ratio:.1f}:1) against background ({current_bg_hex})",
+                                )
+                        except Exception:
+                            pass
 
     def check_card_consistency_across_pages(self):
         if not self.cards_across_pages:

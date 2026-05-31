@@ -154,11 +154,21 @@ def classify_palette(colors):
     # Primary = accent (saturated color for emphasis)
     primary = accent
     
-    # Derive variants
-    primary_dark = adjust_lightness(primary, 0.85)
+    # Derive variants with contrast safety
+    primary_dark = adjust_lightness(primary, 0.75)
+    
+    # Ensure primary-on-white and white-on-primary contrast
+    primary_lum = luminance(*hex_to_rgb(primary))
+    white_on_primary = (1.0 + 0.05) / (primary_lum + 0.05)
+    if white_on_primary < 4.5:
+        # Primary is too bright for white text — generate a darker text-safe variant
+        primary_text = darken_for_contrast(primary, target_contrast=4.5, against="#FFFFFF")
+    else:
+        primary_text = primary
     
     # Text: medium gray, ensure contrast with background
-    if luminance(*hex_to_rgb(background)) > 0.5:
+    bg_lum = luminance(*hex_to_rgb(background))
+    if bg_lum > 0.5:
         text = "#6B6B6B"
         text_light = "#B0B0B0"
         white = "#FFFFFF"
@@ -167,17 +177,24 @@ def classify_palette(colors):
         text_light = "#707070"
         white = "#FFFFFF"
     
+    # Ensure textLight has sufficient contrast on background (WCAG AA: 4.5:1)
+    text_light = darken_for_contrast(text_light, target_contrast=4.5, against=background)
+    
     # SurfaceAlt: subtle variant of background
     bg_hsl = hsl(background)
     if bg_hsl[2] > 0.5:
         surface_alt = adjust_lightness(background, 0.92)
+        surface = adjust_lightness(background, 0.96)
     else:
         surface_alt = adjust_lightness(background, 1.15)
+        surface = adjust_lightness(background, 1.08)
     
     return {
         'primary': primary,
         'primaryDark': primary_dark,
+        'primaryText': primary_text,
         'background': background,
+        'surface': surface,
         'surfaceAlt': surface_alt,
         'ink': ink,
         'text': text,
@@ -193,6 +210,52 @@ def adjust_lightness(hex_color, factor):
     g = min(255, max(0, int(g * factor)))
     b = min(255, max(0, int(b * factor)))
     return rgb_to_hex(r, g, b)
+
+
+def ensure_contrast(hex_color, target_contrast=4.5, against="#FFFFFF"):
+    """Adjust a color (lighten or darken) until it achieves target contrast ratio against the given color."""
+    target_lum = luminance(*hex_to_rgb(against))
+    color_lum = luminance(*hex_to_rgb(hex_color))
+    
+    # Determine if we need to lighten or darken
+    if color_lum < target_lum:
+        # Color is darker than background, need to darken further
+        # target = (target_lum + 0.05) / (dark_lum + 0.05)
+        target_dark_lum = (target_lum + 0.05) / target_contrast - 0.05
+        target_dark_lum = max(0.0, target_dark_lum)
+        h, s, l = hsl(hex_color)
+        low, high = 0.0, l
+        for _ in range(20):
+            mid = (low + high) / 2
+            test_hex = hsl_to_hex(h, s, mid)
+            test_lum = luminance(*hex_to_rgb(test_hex))
+            if test_lum > target_dark_lum:
+                high = mid
+            else:
+                low = mid
+        return hsl_to_hex(h, s, low)
+    else:
+        # Color is lighter than background, need to lighten further
+        # target = (light_lum + 0.05) / (target_lum + 0.05)
+        target_light_lum = target_contrast * (target_lum + 0.05) - 0.05
+        target_light_lum = min(1.0, target_light_lum)
+        h, s, l = hsl(hex_color)
+        low, high = l, 1.0
+        for _ in range(20):
+            mid = (low + high) / 2
+            test_hex = hsl_to_hex(h, s, mid)
+            test_lum = luminance(*hex_to_rgb(test_hex))
+            if test_lum < target_light_lum:
+                low = mid
+            else:
+                high = mid
+        return hsl_to_hex(h, s, high)
+
+
+def darken_for_contrast(hex_color, target_contrast=4.5, against="#FFFFFF"):
+    """Darken a color until it achieves target contrast ratio against the given color.
+    Deprecated: use ensure_contrast instead."""
+    return ensure_contrast(hex_color, target_contrast, against)
 
 
 # ---------------------------------------------------------------------------
@@ -420,7 +483,9 @@ def generate_design_md(name, colors, typography, mood='modern', bucket='professi
 colors:
   primary: "{colors['primary']}"
   primaryDark: "{colors['primaryDark']}"
+  primaryText: "{colors.get('primaryText', colors['primary'])}"
   background: "{colors['background']}"
+  surface: "{colors['surface']}"
   surfaceAlt: "{colors['surfaceAlt']}"
   ink: "{colors['ink']}"
   text: "{colors['text']}"
@@ -434,46 +499,46 @@ colors:
 textStyles:
   heroTitle:
     fontSize: {hero_size}
-    color: "{{{{ink}}}}"
+    color: "$ink"
     fontFamily: "{display_font}"
     lineHeight: {line_height}
     letterSpacing: {tracking}
   sectionHeadline:
     fontSize: {section_size}
-    color: "{{{{ink}}}}"
+    color: "$ink"
     fontFamily: "{display_font}"
     lineHeight: {line_height}
     letterSpacing: {max(1, tracking // 2)}
   columnTitle:
     fontSize: {card_size}
-    color: "{{{{ink}}}}"
+    color: "$ink"
     fontFamily: "{display_font}"
     lineHeight: 1.1
     letterSpacing: {max(1, tracking // 2)}
   cardTitle:
     fontSize: 24
-    color: "{{{{ink}}}}"
+    color: "$ink"
     fontFamily: "{display_font}"
     lineHeight: 1.1
     letterSpacing: 1
   statNumeral:
     fontSize: 56
-    color: "{{{{primary}}}}"
+    color: "$primary"
     fontFamily: "{display_font}"
     lineHeight: 1.0
   body:
     fontSize: 18
-    color: "{{{{text}}}}"
+    color: "$text"
     fontFamily: "{body_font}"
     lineHeight: 1.7
   bodySm:
     fontSize: 15
-    color: "{{{{text}}}}"
+    color: "$text"
     fontFamily: "{body_font}"
     lineHeight: 1.6
   sectionLabel:
     fontSize: 12
-    color: "{{{{primary}}}}"
+    color: "$primary"
     fontFamily: "{body_font}"
     lineHeight: 1.0
     letterSpacing: 4
@@ -486,15 +551,15 @@ tableStyles:
   default:
     fontSize: 15
     fontFamily: "{body_font}"
-    headerFill: "{{{{primary}}}}"
-    headerColor: "{{{{white}}}}"
+    headerFill: "$primary"
+    headerColor: "$white"
     headerBold: true
-    bodyFill: ["{{{{white}}}}", "{{{{background}}}}"]
-    bodyColor: "{{{{ink}}}}"
+    bodyFill: ["$white", "$background"]
+    bodyColor: "$ink"
     border:
       style: solid
       width: 2
-      color: "{{{{ink}}}}"
+      color: "$ink"
 ```
 
 ## Decoration Grammar

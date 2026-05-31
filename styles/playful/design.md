@@ -1,104 +1,104 @@
 ---
 version: alpha
 name: Playful
-description: A warm, hand-crafted editorial system built on a peach-clay canvas with charcoal ink as the only "color." Display type runs in Syne (weight 700–800, tight negative tracking); body type runs in Space Grotesk at weight 400–500. The aesthetic borrows from independent studio decks, risograph zines, and sketchbook spreads: organic blob frames, scribbled SVG doodles, slightly rotated cards, and double-stroke offset borders give every slide a hand-touched, unpolished warmth. The effect is creative-studio editorial, not corporate pitch — confident but human, structured but loose.
+description: "A warm, hand-crafted editorial system built on a peach-clay canvas with charcoal ink as the only \"color.\" Display type runs in Syne (weight 700–800, tight negative tracking); body type runs in Space Grotesk at weight 400–500. The aesthetic borrows from independent studio decks, risograph zines, and sketchbook spreads: organic blob frames, scribbled SVG doodles, slightly rotated cards, and double-stroke offset borders give every slide a hand-touched, unpolished warmth. The effect is creative-studio editorial, not corporate pitch — confident but human, structured but loose.\"
 
 colors:
-  bg: "#F0C8A0"
-  bg-alt: "#E8B88E"
-  light: "#F7DEC6"
-  text: "#1A1A1A"
+  bg: \"#F0C8A0\"
+  bg-alt: \"#E8B88E\"
+  light: \"#F7DEC6\"
+  text: \"#1A1A1A\"
 
 color-aliases:
   accent: text
 
 typography:
   display-hero:
-    fontFamily: "Syne, sans-serif"
-    fontSize: "clamp(4rem, 10vw, 9rem)"
+    fontFamily: \"Syne, sans-serif\"
+    fontSize: \"clamp(4rem, 10vw, 9rem)\"
     fontWeight: 800
     lineHeight: 0.9
     letterSpacing: -0.03em
   display:
-    fontFamily: "Syne, sans-serif"
-    fontSize: "clamp(3rem, 8vw, 7rem)"
+    fontFamily: \"Syne, sans-serif\"
+    fontSize: \"clamp(3rem, 8vw, 7rem)\"
     fontWeight: 800
     lineHeight: 0.9
     letterSpacing: -0.02em
   headline:
-    fontFamily: "Syne, sans-serif"
-    fontSize: "clamp(2.5rem, 6vw, 5rem)"
+    fontFamily: \"Syne, sans-serif\"
+    fontSize: \"clamp(2.5rem, 6vw, 5rem)\"
     fontWeight: 700
     lineHeight: 1.0
     letterSpacing: -0.01em
   statement:
-    fontFamily: "Syne, sans-serif"
-    fontSize: "clamp(2.5rem, 5vw, 4.5rem)"
+    fontFamily: \"Syne, sans-serif\"
+    fontSize: \"clamp(2.5rem, 5vw, 4.5rem)\"
     fontWeight: 700
     lineHeight: 1.1
     letterSpacing: -0.01em
   title:
-    fontFamily: "Syne, sans-serif"
-    fontSize: "clamp(2rem, 4vw, 3.5rem)"
+    fontFamily: \"Syne, sans-serif\"
+    fontSize: \"clamp(2rem, 4vw, 3.5rem)\"
     fontWeight: 700
     lineHeight: 1.1
     letterSpacing: -0.01em
   title-sm:
-    fontFamily: "Syne, sans-serif"
-    fontSize: "1.3rem"
+    fontFamily: \"Syne, sans-serif\"
+    fontSize: \"1.3rem\"
     fontWeight: 700
     lineHeight: 1.2
   number-hero:
-    fontFamily: "Syne, sans-serif"
-    fontSize: "clamp(4rem, 8vw, 7rem)"
+    fontFamily: \"Syne, sans-serif\"
+    fontSize: \"clamp(4rem, 8vw, 7rem)\"
     fontWeight: 800
     lineHeight: 1.0
   number-md:
-    fontFamily: "Syne, sans-serif"
-    fontSize: "2.5rem"
+    fontFamily: \"Syne, sans-serif\"
+    fontSize: \"2.5rem\"
     fontWeight: 800
     lineHeight: 1.0
   number-sm:
-    fontFamily: "Syne, sans-serif"
-    fontSize: "2rem"
+    fontFamily: \"Syne, sans-serif\"
+    fontSize: \"2rem\"
     fontWeight: 800
     lineHeight: 1.0
   body:
-    fontFamily: "Space Grotesk, sans-serif"
-    fontSize: "clamp(1rem, 1.2vw, 1.1rem)"
+    fontFamily: \"Space Grotesk, sans-serif\"
+    fontSize: \"clamp(1rem, 1.2vw, 1.1rem)\"
     fontWeight: 400
     lineHeight: 1.7
   body-md:
-    fontFamily: "Space Grotesk, sans-serif"
-    fontSize: "1.2rem"
+    fontFamily: \"Space Grotesk, sans-serif\"
+    fontSize: \"1.2rem\"
     fontWeight: 500
     lineHeight: 1.6
   label-eyebrow:
-    fontFamily: "Space Grotesk, sans-serif"
-    fontSize: "0.85rem"
+    fontFamily: \"Space Grotesk, sans-serif\"
+    fontSize: \"0.85rem\"
     fontWeight: 600
     lineHeight: 1.2
     letterSpacing: 0.15em
     textTransform: uppercase
   caption:
-    fontFamily: "Space Grotesk, sans-serif"
-    fontSize: "0.85rem"
+    fontFamily: \"Space Grotesk, sans-serif\"
+    fontSize: \"0.85rem\"
     fontWeight: 500
     lineHeight: 1.4
   tag:
-    fontFamily: "Space Grotesk, sans-serif"
-    fontSize: "0.75rem"
+    fontFamily: \"Space Grotesk, sans-serif\"
+    fontSize: \"0.75rem\"
     fontWeight: 600
     lineHeight: 1.2
 
 spacing:
-  pad-slide-lg: "4rem 5rem"
-  pad-slide-md: "3rem 4rem"
-  pad-card-lg: "2rem 3rem"
-  pad-card-md: "1.5rem"
-  gap-lg: "3rem"
-  gap-md: "2rem"
-  gap-sm: "1.5rem"
+  pad-slide-lg: \"4rem 5rem\"
+  pad-slide-md: \"3rem 4rem\"
+  pad-card-lg: \"2rem 3rem\"
+  pad-card-md: \"1.5rem\"
+  gap-lg: \"3rem\"
+  gap-md: \"2rem\"
+  gap-sm: \"1.5rem\"
 
 canvas:
   width: 100vw
@@ -106,87 +106,86 @@ canvas:
 
 components:
   rough-box:
-    border: "3px solid {colors.text}"
-    background: "{colors.bg}"
-    padding: "1.5rem"
-    offsetShadowOffset: "6px 6px"
-    offsetShadowBorder: "2–3px solid {colors.text}"
-    description: "Generic content card with a double-stroke effect — the inner box has a 3px solid border, and an absolutely-positioned ::before pseudo-element offsets a second 2–3px border down-and-right by 6–8px to simulate a hand-drawn double outline. No fill on the offset; the canvas shows through."
+    border: \"3px solid {colors.text}\"
+    background: \"{colors.bg}\"
+    padding: \"1.5rem\"
+    offsetShadowOffset: \"6px 6px\"
+    offsetShadowBorder: \"2–3px solid {colors.text}\"
+    description: \"Generic content card with a double-stroke effect — the inner box has a 3px solid border, and an absolutely-positioned ::before pseudo-element offsets a second 2–3px border down-and-right by 6–8px to simulate a hand-drawn double outline. No fill on the offset; the canvas shows through.\"
   filled-block:
-    background: "{colors.text}"
-    color: "{colors.bg}"
-    padding: "1.5rem"
-    description: "Inverted card: dark charcoal background with peach text. Used as the visual counterpoint to outlined cards in a collage of mixed treatments."
+    background: \"{colors.text}\"
+    color: \"{colors.bg}\"
+    padding: \"1.5rem\"
+    description: \"Inverted card: dark charcoal background with peach text. Used as the visual counterpoint to outlined cards in a collage of mixed treatments.\"
   blob-frame-organic:
-    border: "3px solid {colors.text}"
-    borderRadius: "40% 60% 70% 30% / 40% 50% 60% 50%"
-    description: "Organic outlined blob, asymmetric border-radius. Decorative wrapper that holds a smaller solid filled-blob inside it."
+    border: \"3px solid {colors.text}\"
+    borderRadius: \"40% 60% 70% 30% / 40% 50% 60% 50%\"
+    description: \"Organic outlined blob, asymmetric border-radius. Decorative wrapper that holds a smaller solid filled-blob inside it.\"
   blob-frame-pebble:
-    border: "3px solid {colors.text}"
-    borderRadius: "255px 15px 225px 15px / 15px 225px 15px 255px"
-    description: "Pebble-shaped frame with extreme alternating border-radius — two opposing corners pulled long, the other two pinched short. Reads as a hand-drawn lozenge."
+    border: \"3px solid {colors.text}\"
+    borderRadius: \"255px 15px 225px 15px / 15px 225px 15px 255px\"
+    description: \"Pebble-shaped frame with extreme alternating border-radius — two opposing corners pulled long, the other two pinched short. Reads as a hand-drawn lozenge.\"
   blob-fill:
-    background: "{colors.text}"
-    borderRadius: "60% 40% 30% 70% / 60% 30% 70% 40%"
-    description: "Solid dark blob with asymmetric organic radius. Used inside an outlined blob-frame or floating on its own as decorative mass."
+    background: \"{colors.text}\"
+    borderRadius: \"60% 40% 30% 70% / 60% 30% 70% 40%\"
+    description: \"Solid dark blob with asymmetric organic radius. Used inside an outlined blob-frame or floating on its own as decorative mass.\"
   scribble-svg:
-    stroke: "{colors.text}"
+    stroke: \"{colors.text}\"
     strokeWidth: 2
     fill: none
     strokeLinecap: round
-    description: "Inline SVG path drawn as a single hand-drawn line — wavy stub, scribbled circle, star outline, squiggle, arrow. Always 2px stroke, rounded caps. Placed absolutely in corners and edges as decorative breath."
+    description: \"Inline SVG path drawn as a single hand-drawn line — wavy stub, scribbled circle, star outline, squiggle, arrow. Always 2px stroke, rounded caps. Placed absolutely in corners and edges as decorative breath.\"
   doodle-circle:
-    border: "3px solid {colors.text}"
-    borderRadius: "50%"
-    description: "Plain round outlined circle used as a decorative anchor in slide corners."
+    border: \"3px solid {colors.text}\"
+    borderRadius: \"50%\"
+    description: \"Plain round outlined circle used as a decorative anchor in slide corners.\"
   doodle-rect:
-    border: "3px solid {colors.text}"
-    rotation: "5–10deg"
-    description: "Plain outlined rectangle, slightly rotated, used as a decorative anchor in slide corners."
+    border: \"3px solid {colors.text}\"
+    rotation: \"5–10deg\"
+    description: \"Plain outlined rectangle, slightly rotated, used as a decorative anchor in slide corners.\"
   card-rotated:
-    transform: "rotate(-3deg to 3deg)"
-    description: "Any card or block can carry a small ±3deg rotation. Rotations stagger so adjacent cards rotate in opposite directions — never all in the same direction, never more than 3deg."
+    transform: \"rotate(-3deg to 3deg)\"
+    description: \"Any card or block can carry a small ±3deg rotation. Rotations stagger so adjacent cards rotate in opposite directions — never all in the same direction, never more than 3deg.\"
   step-node-circle:
     width: 64px
     height: 64px
-    border: "3px solid {colors.text}"
-    borderRadius: "50%"
-    background: "{colors.bg}"
-    fontFamily: "Syne, sans-serif"
+    border: \"3px solid {colors.text}\"
+    borderRadius: \"50%\"
+    background: \"{colors.bg}\"
+    fontFamily: \"Syne, sans-serif\"
     fontSize: 1.5rem
     fontWeight: 800
-    description: "Round outlined node containing a single numeric digit at display weight. Used as a timeline or process marker; alternates between outlined (bg fill) and filled (charcoal fill, bg text)."
+    description: \"Round outlined node containing a single numeric digit at display weight. Used as a timeline or process marker; alternates between outlined (bg fill) and filled (charcoal fill, bg text).\"
   avatar-placeholder:
     width: 60px
     height: 60px
-    background: "{colors.text}"
-    borderRadius: "50%"
-    description: "Solid dark circle used as a portrait stand-in inside a team or people card."
+    background: \"{colors.text}\"
+    borderRadius: \"50%\"
+    description: \"Solid dark circle used as a portrait stand-in inside a team or people card.\"
   tag-pill:
-    background: "{colors.text}"
-    color: "{colors.bg}"
-    padding: "0.4rem 0.8rem"
-    fontFamily: "Space Grotesk, sans-serif"
-    fontSize: "0.75rem"
+    background: \"{colors.text}\"
+    color: \"{colors.bg}\"
+    padding: \"0.4rem 0.8rem\"
+    fontFamily: \"Space Grotesk, sans-serif\"
+    fontSize: \"0.75rem\"
     fontWeight: 600
-    description: "Small charcoal pill with peach text, anchored to the bottom-left of an image frame as a category label."
+    description: \"Small charcoal pill with peach text, anchored to the bottom-left of an image frame as a category label.\"
   bar-chart:
-    barFillSolid: "{colors.text}"
-    barFillOutlined: "3px solid {colors.text} + transparent"
-    axisStroke: "3px solid {colors.text}"
-    description: "Custom HTML bar chart. Bars are either solid charcoal (primary series) or outlined transparent (secondary series). Axes are 3px solid charcoal lines, no grid."
+    barFillSolid: \"{colors.text}\"
+    barFillOutlined: \"3px solid {colors.text} + transparent\"
+    axisStroke: \"3px solid {colors.text}\"
+    description: \"Custom HTML bar chart. Bars are either solid charcoal (primary series) or outlined transparent (secondary series). Axes are 3px solid charcoal lines, no grid.\"
   vertical-text:
-    fontFamily: "Syne, sans-serif"
+    fontFamily: \"Syne, sans-serif\"
     fontWeight: 700
     letterSpacing: 0.1em
-    transform: "rotate(90deg)"
-    description: "Display-weight text rotated 90deg, anchored to a slide edge as a magazine-style spine label."
+    transform: \"rotate(90deg)\"
+    description: \"Display-weight text rotated 90deg, anchored to a slide edge as a magazine-style spine label.\"
   ghost-blob:
-    background: "{colors.text}"
-    borderRadius: "40% 60% 70% 30% / 40% 50% 60% 50%"
+    background: \"{colors.text}\"
+    borderRadius: \"40% 60% 70% 30% / 40% 50% 60% 50%\"
     opacity: 0.08
-    description: "Oversized organic blob at very low opacity placed behind content as atmospheric wallpaper. Functions like a watermark cloud."
----
+    description: \"Oversized organic blob at very low opacity placed behind content as atmospheric wallpaper. Functions like a watermark cloud."---
 decorations:
   cover-bg:
     draw: "Compose from bg and bg-alt rounded color blobs + light accent shapes + playful scattered dots. No pre-rendered background image."

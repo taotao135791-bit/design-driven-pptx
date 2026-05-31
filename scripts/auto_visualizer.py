@@ -195,6 +195,7 @@ def build_pie_chart(data, bounds, element_id='auto-chart'):
         'elementId': element_id,
         'elementType': 'chart',
         'bounds': bounds,
+        'layer': 1,
         'chartType': 'pie',
         'data': {
             'labels': labels,
@@ -213,6 +214,7 @@ def build_bar_chart(data, bounds, element_id='auto-chart'):
         'elementId': element_id,
         'elementType': 'chart',
         'bounds': bounds,
+        'layer': 1,
         'chartType': 'bar',
         'data': {
             'labels': labels,
@@ -230,6 +232,7 @@ def build_line_chart(data, bounds, element_id='auto-chart'):
         'elementId': element_id,
         'elementType': 'chart',
         'bounds': bounds,
+        'layer': 1,
         'chartType': 'line',
         'data': {
             'labels': labels,
@@ -255,6 +258,7 @@ def build_table(data, bounds, element_id='auto-table', data_type='comparison'):
         'elementId': element_id,
         'elementType': 'table',
         'bounds': bounds,
+        'layer': 1,
         'tableStyle': '$tableStyles.default',
         'data': {
             'header': header,
@@ -282,6 +286,7 @@ def build_timeline_elements(data, start_y=200):
             'bounds': [340, y + 20, 20, 20],
             'shapeName': 'ellipse',
             'fill': {'type': 'solid', 'color': '$primary'},
+            'layer': 1,
         })
         
         # Label
@@ -296,6 +301,7 @@ def build_timeline_elements(data, start_y=200):
                 'fontFamily': 'Bebas Neue, ZCOOL XiaoWei',
             },
             'wrap': False,
+            'layer': 1,
         })
         
         # Description
@@ -310,6 +316,7 @@ def build_timeline_elements(data, start_y=200):
                 'fontFamily': 'Inter, Yozai',
                 'lineHeight': 1.5,
             },
+            'layer': 1,
         })
         
         y += spacing
@@ -322,6 +329,7 @@ def build_timeline_elements(data, start_y=200):
         'shapeName': 'rect',
         'fill': {'type': 'solid', 'color': '$primary'},
         'opacity': 0.3,
+        'layer': 0,
     })
     
     return elements

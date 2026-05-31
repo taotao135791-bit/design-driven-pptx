@@ -20,46 +20,46 @@ colors:
 textStyles:
   heroTitle:
     fontSize: 48
-    color: "{{ink}}"
+    color: "$ink"
     fontFamily: "Courier Prime, ZCOOL XiaoWei"
     lineHeight: 1.2
     letterSpacing: 1
   sectionHeadline:
     fontSize: 36
-    color: "{{ink}}"
+    color: "$ink"
     fontFamily: "Courier Prime, ZCOOL XiaoWei"
     lineHeight: 1.2
     letterSpacing: 1
   columnTitle:
     fontSize: 24
-    color: "{{ink}}"
+    color: "$ink"
     fontFamily: "Courier Prime, ZCOOL XiaoWei"
     lineHeight: 1.1
     letterSpacing: 1
   cardTitle:
     fontSize: 24
-    color: "{{ink}}"
+    color: "$ink"
     fontFamily: "Courier Prime, ZCOOL XiaoWei"
     lineHeight: 1.1
     letterSpacing: 1
   statNumeral:
     fontSize: 56
-    color: "{{primary}}"
+    color: "$primary"
     fontFamily: "Courier Prime, ZCOOL XiaoWei"
     lineHeight: 1.0
   body:
     fontSize: 18
-    color: "{{text}}"
+    color: "$text"
     fontFamily: "Courier Prime, Yozai"
     lineHeight: 1.7
   bodySm:
     fontSize: 15
-    color: "{{text}}"
+    color: "$text"
     fontFamily: "Courier Prime, Yozai"
     lineHeight: 1.6
   sectionLabel:
     fontSize: 12
-    color: "{{primary}}"
+    color: "$primary"
     fontFamily: "Courier Prime, Yozai"
     lineHeight: 1.0
     letterSpacing: 4
@@ -72,15 +72,15 @@ tableStyles:
   default:
     fontSize: 15
     fontFamily: "Courier Prime, Yozai"
-    headerFill: "{{primary}}"
-    headerColor: "{{white}}"
+    headerFill: "$primary"
+    headerColor: "$white"
     headerBold: true
-    bodyFill: ["{{white}}", "{{background}}"]
-    bodyColor: "{{ink}}"
+    bodyFill: ["$white", "$background"]
+    bodyColor: "$ink"
     border:
       style: solid
       width: 2
-      color: "{{ink}}"
+      color: "$ink"
 ```
 
 ## Decoration Grammar

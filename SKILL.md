@@ -43,6 +43,8 @@ Required files (user-provided):
 - All .page files use `pageType`: cover | table_of_contents | chapter | content | final.
 - `content.text` must use YAML block scalar `|`.
 - Single-line text boxes must set `wrap: false`.
+- Every element must have a `layer` field (-1=bg, 0=container, 1=content, 2=fg).
+- `bounds: [x, y, w, h]` is the coordinate format.
 - All files go under `<work-dir>/` with `pages/` subdirectory.
 
 ## File Structure
@@ -78,12 +80,15 @@ The converter supports:
 - Shapes (rect, roundRect, ellipse, triangle, diamond, star5, plus, arrow, flowchart shapes, etc.)
 - Images (local paths and URLs)
 - Tables with theme styling
-- Charts (bar, line, pie, scatter, bubble, combo — fully rendered with theme colors)
+- Charts (bar, line, pie, scatter, bubble, combo — fully rendered with theme colors + seriesStyle)
+- Tables with theme styling (header/body fill, border, font)
+- Freeform shapes (SVG path commands M/L/C/Q/Z with rotation)
 - SVG Decorations (pattern, background, accent, divider — auto-rendered to PNG via resvg)
 - Icons (rendered as placeholder label)
 - Backgrounds (solid, gradient, image)
 - Theme colors & text styles
-- Borders, fills, and rotations
+- Borders, fills, rotations, shadows, opacity
+- CJK font fallback via `a:ea` element
 
 ## Progressive Loading
 
@@ -93,6 +98,7 @@ Load references only when needed:
 - Before step 5: read `references/subagent-prompts.md`
 - For chart generation: read `references/chart-guide.md`
 - For dynamic colors: read `references/dynamic-color-adaptation.md`
+- For layout templates: read `references/design-adapter.md` Section 6
 - For PPTD format: read `format/pptd.md`
 - For subagent notes: read `guideline/subagent/attention.md`
 - For outline template: read `assets/outline-template.md`

@@ -44,6 +44,9 @@
 | CJK 字体回退 | CJK font fallback | 拉丁字体 + CJK 字体双声明，自动注入 `a:ea` 元素 |
 | 自由形状 | Freeform paths | SVG 路径语法（M/L/C/Q/Z），支持旋转与填充 |
 | 一键转 PPTX | One-click to PPTX | 内置 `pptd2pptx.py` 转换器，本地即可导出 |
+| **🎨 风格迁移** | **One-shot Style Migration** | 上传图片或输入描述，自动提取设计 DNA 生成 `design.md` |
+| **📊 语义可视化** | **Semantic Auto-Viz** | 自动识别内容中的数据模式，插入图表/时间线/表格 |
+| **📝 设计透明** | **Design Rationale** | 自动生成每页的设计决策说明文档 |
 
 ---
 
@@ -110,6 +113,20 @@ my-presentation/
 python3 scripts/pptd2pptx.py my-presentation/slides.pptd my-presentation/slides.pptx
 ```
 
+### 4. 惊艳增强（可选）/ Wow Enhancements (Optional)
+
+```bash
+# 🎨 One-shot 风格迁移 — 从图片/描述生成设计系统
+python3 scripts/style_migrator.py --image brand-poster.jpg --name "my-brand"
+python3 scripts/style_migrator.py --text "像苹果发布会那样，深色背景配蓝色强调" --name "apple-like"
+
+# 📊 语义自动可视化 — 智能识别数据并插入图表
+python3 scripts/auto_visualizer.py --pptd my-presentation/slides.pptd --mode enhance
+
+# 📝 设计决策透明化 — 生成设计理由文档
+python3 scripts/design_rationale.py --pptd my-presentation/slides.pptd --design-md my-presentation/design.md
+```
+
 ---
 
 ## 项目结构 / Project Structure
@@ -121,7 +138,10 @@ design-driven-pptx/
 ├── scripts/
 │   ├── check.sh                      # PPTD 校验脚本（自动回退到 Python）
 │   ├── check_pptd.py                 # 纯 Python PPTD 校验器（10+ 规则 + 布局质量检查）
-│   └── pptd2pptx.py                  # PPTD → PPTX 转换器
+│   ├── pptd2pptx.py                  # PPTD → PPTX 转换器
+│   ├── style_migrator.py             # 🎨 One-shot 风格迁移（图片/URL/描述 → design.md）
+│   ├── auto_visualizer.py            # 📊 语义自动可视化（内容 → chart/table/timeline）
+│   └── design_rationale.py           # 📝 设计决策透明化（.pptd → 设计理由文档）
 ├── styles/                           # 内置设计系统库（35 套）
 │   ├── block-frame/
 │   │   └── design.md

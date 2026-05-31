@@ -1,0 +1,65 @@
+pageType: content
+bgColor: $background
+elements:
+- elementId: text
+  elementType: text
+  bounds:
+  - 60
+  - 80
+  - 500
+  - 200
+  content:
+    text: 'Q1: 5000
+
+      Q2: 15000
+
+      Q3: 32000
+
+      Q4: 50000
+
+      '
+    fontSize: 18
+    color: $text
+    fontFamily: Inter
+- elementId: viz-text
+  elementType: chart
+  bounds:
+  - 60
+  - 320
+  - 1160
+  - 320
+  chartType: line
+  data:
+    labels:
+    - Q1
+    - Q2
+    - Q3
+    - Q4
+    values:
+    - 5000.0
+    - 15000.0
+    - 32000.0
+    - 50000.0
+  seriesStyle:
+    smooth: true
+- elementId: viz-text
+  elementType: chart
+  bounds:
+  - 60
+  - 320
+  - 1160
+  - 320
+  chartType: line
+  data:
+    labels:
+    - Q1
+    - Q2
+    - Q3
+    - Q4
+    values:
+    - 5000.0
+    - 15000.0
+    - 32000.0
+    - 50000.0
+  seriesStyle:
+    smooth: true

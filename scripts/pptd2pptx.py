@@ -1432,16 +1432,36 @@ class PPTDConverter:
                     series.marker.style = XL_MARKER_STYLE.AUTOMATIC
 
     def _add_chart(self, slide, element):
-        """Render a real chart using python-pptx chart API."""
+        """Render a real chart using python-pptx chart API.
+        Supports two data formats:
+          1. Simple: {labels: [...], values: [...]}
+          2. Advanced: list of dicts with x_field/y_fields mapping
+        """
         bounds = element.get('bounds', [0, 0, 100, 100])
         x, y, w, h = self._to_emu(*bounds)
-        chart_type = element.get('type', 'bar')
+        # Support both 'type' and 'chartType' keys
+        chart_type = element.get('chartType') or element.get('type', 'bar')
         data = element.get('data', [])
         x_field = element.get('x', '')
         y_fields = element.get('y', [])
         names = element.get('names', [])
         colors = element.get('colors', [])
         options = element.get('options', {})
+
+        # Convert simple format {labels, values} to advanced format
+        if isinstance(data, dict) and 'labels' in data and 'values' in data:
+            labels = data['labels']
+            values = data['values']
+            # Build advanced data structure
+            data = []
+            for i, label in enumerate(labels):
+                row = {'category': label}
+                if i < len(values):
+                    row['value'] = values[i]
+                data.append(row)
+            x_field = 'category'
+            y_fields = ['value']
+            names = ['Value']
 
         if not data or not x_field or not y_fields:
             shape = slide.shapes.add_shape(
@@ -1524,9 +1544,13 @@ class PPTDConverter:
                     for run in para.runs:
                         run.font.name = chart_font
             if chart.has_legend:
-                for para in chart.legend.text_frame.paragraphs:
-                    for run in para.runs:
-                        run.font.name = chart_font
+                try:
+                    legend_tf = chart.legend.text_frame
+                    for para in legend_tf.paragraphs:
+                        for run in para.runs:
+                            run.font.name = chart_font
+                except AttributeError:
+                    pass  # legend may not have text_frame
 
             # Apply seriesStyle settings
             series_style = element.get('seriesStyle', {})

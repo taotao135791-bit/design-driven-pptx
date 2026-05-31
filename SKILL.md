@@ -33,7 +33,16 @@ Required files (user-provided):
 4. **Create .pptd** — Write master entry file with theme + page list
 5. **Build .page files** — Dispatch subagents in parallel (read `references/subagent-prompts.md`)
 6. **Check & fix** — Run checker, fix errors/warnings
-7. **Deliver** — Return .pptd artifact
+7. **Wow enhancements** (optional) — Style migration, auto-visualization, design rationale
+8. **Deliver** — Return .pptd artifact
+
+### Wow Enhancements (Optional Post-Processing)
+
+These tools can be applied after step 6 to elevate the presentation:
+
+- **`scripts/style_migrator.py`** — One-shot style migration. Extract design DNA from an image, URL, or text description and auto-generate a complete `design.md`. Useful when the user says "like Apple's keynote" or uploads a brand reference.
+- **`scripts/auto_visualizer.py`** — Semantic auto-visualization. Scan `.page` files for data patterns (percentages, time series, comparisons, sequential steps) and automatically insert `chart`, `table`, or timeline elements. Modes: `suggest` (preview), `enhance` (add alongside text), `replace` (swap text for viz).
+- **`scripts/design_rationale.py`** — Design decision transparency. Analyze the complete `.pptd` + `design.md` and generate a human-readable `design-rationale.md` explaining every layout choice, color decision, typography hierarchy, and data viz rationale.
 
 ## Key Rules
 

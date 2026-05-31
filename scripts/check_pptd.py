@@ -19,6 +19,8 @@ import yaml
 DEFAULT_CANVAS = (1280, 720)
 PAGE_TYPES = {"cover", "table_of_contents", "chapter", "content", "final"}
 
+MINIMAL_STYLES = {"monochrome", "vellum", "cartesian"}
+
 # Known shape names from the spec
 KNOWN_SHAPES = {
     "rect",
@@ -45,6 +47,22 @@ KNOWN_SHAPES = {
     "custom",
 }
 
+# Shapes that suggest a timeline / step node layout is present
+TIMELINE_STEP_SHAPES = {
+    "flowChartProcess",
+    "flowChartDecision",
+    "flowChartTerminator",
+    "chevron",
+    "homePlate",
+    "straightConnector1",
+    "bentConnector2",
+    "bentConnector3",
+    "bentConnector4",
+    "curvedConnector2",
+    "curvedConnector3",
+    "curvedConnector4",
+}
+
 # Add all MSO_SHAPE names from python-pptx if available
 try:
     from pptx.enum.shapes import MSO_SHAPE
@@ -59,6 +77,7 @@ except Exception:
 # YAML helpers
 # ---------------------------------------------------------------------------
 
+
 def load_yaml(path: Path):
     with open(path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
@@ -67,6 +86,7 @@ def load_yaml(path: Path):
 # ---------------------------------------------------------------------------
 # Validation helpers
 # ---------------------------------------------------------------------------
+
 
 def is_valid_color(value: str) -> bool:
     """Check if a color string is valid hex or $ref."""
@@ -92,7 +112,14 @@ def strip_html_tags(text: str) -> str:
     return clean
 
 
-def estimate_text_overflow(text: str, font_size: float, line_height_mult: float, wrap: bool, bounds_w: float, bounds_h: float):
+def estimate_text_overflow(
+    text: str,
+    font_size: float,
+    line_height_mult: float,
+    wrap: bool,
+    bounds_w: float,
+    bounds_h: float,
+):
     """
     Returns (overflow_ratio, details_str).
     overflow_ratio: negative or 0 means fits, positive means overflow percentage.
@@ -110,7 +137,9 @@ def estimate_text_overflow(text: str, font_size: float, line_height_mult: float,
     if not wrap:
         if total_width <= bounds_w:
             return (0.0, "fits in one line")
-        overflow = (total_width - bounds_w) / bounds_w if bounds_w > 0 else float("inf")
+        overflow = (
+            (total_width - bounds_w) / bounds_w if bounds_w > 0 else float("inf")
+        )
         return (overflow, f"width {total_width:.1f}px > bounds {bounds_w}px")
 
     # Wrapped mode
@@ -127,8 +156,99 @@ def estimate_text_overflow(text: str, font_size: float, line_height_mult: float,
     total_height = lines_needed * line_height
     if total_height <= bounds_h:
         return (0.0, f"{lines_needed} lines fit")
-    overflow = (total_height - bounds_h) / bounds_h if bounds_h > 0 else float("inf")
+    overflow = (
+        (total_height - bounds_h) / bounds_h if bounds_h > 0 else float("inf")
+    )
     return (overflow, f"{lines_needed} lines ({total_height:.1f}px) > bounds {bounds_h}px")
+
+
+# ---------------------------------------------------------------------------
+# Data-visualization opportunity helpers
+# ---------------------------------------------------------------------------
+
+
+def count_bullet_items(text: str) -> int:
+    """Count bullet list items in text (HTML <ul> or plain text bullets)."""
+    if not isinstance(text, str):
+        return 0
+    count = 0
+    # HTML unordered lists
+    for ul_content in re.findall(r"(?i)<ul[^>]*>(.*?)</ul>", text, re.DOTALL):
+        count += len(re.findall(r"(?i)<li(?:\s|>)", ul_content))
+
+    # Plain text bullets from stripped text
+    plain = strip_html_tags(text)
+    for line in plain.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("• ") or stripped.startswith("- "):
+            count += 1
+    return count
+
+
+def count_numbered_steps(text: str) -> int:
+    """Count numbered step items in text (HTML <ol> or plain text 1. 2. 3.)."""
+    if not isinstance(text, str):
+        return 0
+    count = 0
+    # HTML ordered lists
+    for ol_content in re.findall(r"(?i)<ol[^>]*>(.*?)</ol>", text, re.DOTALL):
+        count += len(re.findall(r"(?i)<li(?:\s|>)", ol_content))
+
+    # Plain text numbered items from stripped text
+    plain = strip_html_tags(text)
+    for line in plain.splitlines():
+        stripped = line.strip()
+        if re.match(r"^\d+\.\s", stripped):
+            count += 1
+    return count
+
+
+def has_chart_table_timeline(elements: list) -> bool:
+    """Return True if page contains chart, table, or timeline-like elements."""
+    for elem in elements:
+        etype = elem.get("elementType")
+        if etype in ("chart", "table"):
+            return True
+        if etype == "shape" and elem.get("shapeName") in TIMELINE_STEP_SHAPES:
+            return True
+    return False
+
+
+def has_timeline_step_nodes(elements: list) -> bool:
+    """Return True if page contains timeline or step node shapes."""
+    for elem in elements:
+        if (
+            elem.get("elementType") == "shape"
+            and elem.get("shapeName") in TIMELINE_STEP_SHAPES
+        ):
+            return True
+    return False
+
+
+# ---------------------------------------------------------------------------
+# Card helpers
+# ---------------------------------------------------------------------------
+
+
+def is_card(elem: dict) -> bool:
+    """Return True if element looks like a card shape."""
+    if elem.get("elementType") != "shape":
+        return False
+    shape_name = elem.get("shapeName")
+    if shape_name not in ("rect", "roundRect"):
+        return False
+    bounds = elem.get("bounds")
+    if not isinstance(bounds, (list, tuple)) or len(bounds) != 4:
+        return False
+    w, h = float(bounds[2]), float(bounds[3])
+    if w < 150 or h < 80:
+        return False
+    border = elem.get("border")
+    if not isinstance(border, dict):
+        return False
+    if border.get("style") == "none":
+        return False
+    return True
 
 
 # ---------------------------------------------------------------------------
@@ -164,8 +284,17 @@ def collect_refs(obj, path=""):
         for k, v in obj.items():
             new_path = f"{path}.{k}" if path else k
             # Direct color fields
-            if k in ("color", "backgroundColor", "headerColor", "bodyColor",
-                     "firstColumnColor") and isinstance(v, str):
+            if (
+                k
+                in (
+                    "color",
+                    "backgroundColor",
+                    "headerColor",
+                    "bodyColor",
+                    "firstColumnColor",
+                )
+                and isinstance(v, str)
+            ):
                 yield (new_path, v, "color")
             elif k in ("headerFill", "firstColumnFill") and isinstance(v, str):
                 yield (new_path, v, "color")
@@ -195,6 +324,7 @@ def collect_refs(obj, path=""):
 # Main checker
 # ---------------------------------------------------------------------------
 
+
 class Checker:
     def __init__(self, pptd_path: Path, pages_filter: set[str] | None = None):
         self.pptd_path = pptd_path
@@ -206,10 +336,14 @@ class Checker:
         self.theme_table_styles: dict = {}
         self.errors = 0
         self.warnings = 0
+        self.cards_across_pages: list[tuple[str, float]] = []
 
     def log(self, page: str, level: str, message: str):
         prefix = f"  [{level}]"
-        print(f"{prefix} {message}")
+        if page and page != "deck":
+            print(f"{prefix} {message}")
+        else:
+            print(f"Deck: {prefix} {message}")
         if level == "ERROR":
             self.errors += 1
         elif level == "WARNING":
@@ -240,9 +374,15 @@ class Checker:
 
         # Theme
         theme = master.get("theme") or {}
-        self.theme_colors = (theme.get("colors") or {}) if isinstance(theme, dict) else {}
-        self.theme_text_styles = (theme.get("textStyles") or {}) if isinstance(theme, dict) else {}
-        self.theme_table_styles = (theme.get("tableStyles") or {}) if isinstance(theme, dict) else {}
+        self.theme_colors = (
+            (theme.get("colors") or {}) if isinstance(theme, dict) else {}
+        )
+        self.theme_text_styles = (
+            (theme.get("textStyles") or {}) if isinstance(theme, dict) else {}
+        )
+        self.theme_table_styles = (
+            (theme.get("tableStyles") or {}) if isinstance(theme, dict) else {}
+        )
 
         # Also validate theme color values
         for key, val in self.theme_colors.items():
@@ -262,6 +402,9 @@ class Checker:
 
         for page_ref in pages:
             self.check_page(page_ref)
+
+        # Cross-page checks
+        self.check_card_consistency_across_pages()
 
         print(f"\nSummary: {self.errors} errors, {self.warnings} warnings")
         return 1 if self.errors > 0 else 0
@@ -295,11 +438,28 @@ class Checker:
             return
 
         seen_ids = set()
+        valid_elements = []
         for idx, elem in enumerate(elements):
             if not isinstance(elem, dict):
                 self.log(page_ref, "ERROR", f"Element {idx} is not a mapping")
                 continue
             self.check_element(page_ref, elem, idx, seen_ids)
+            valid_elements.append(elem)
+
+        # New quality checks
+        self.check_data_visualization_opportunity(
+            page_ref, page_type, valid_elements
+        )
+        self.check_layout_quality(page_ref, valid_elements)
+
+        # Collect card info for cross-page consistency
+        for elem in valid_elements:
+            if is_card(elem):
+                border = elem.get("border") or {}
+                border_width = border.get("width", 1)
+                if border_width is None:
+                    border_width = 1
+                self.cards_across_pages.append((page_ref, float(border_width)))
 
     def check_element(self, page_ref: str, elem: dict, idx: int, seen_ids: set):
         eid = elem.get("elementId", f"<missing-id-{idx}>")
@@ -314,14 +474,22 @@ class Checker:
         if isinstance(bounds, (list, tuple)) and len(bounds) == 4:
             x, y, w, h = [float(v) for v in bounds]
             if w < 0 or h < 0:
-                self.log(page_ref, "ERROR", f'element "{eid}" has negative width/height')
+                self.log(
+                    page_ref, "ERROR", f'element "{eid}" has negative width/height'
+                )
             else:
                 # Check outside canvas
                 fully_outside = (
-                    x + w <= 0 or x >= self.canvas_w or y + h <= 0 or y >= self.canvas_h
+                    x + w <= 0
+                    or x >= self.canvas_w
+                    or y + h <= 0
+                    or y >= self.canvas_h
                 )
                 partially_outside = (
-                    x < -1 or y < -1 or x + w > self.canvas_w + 1 or y + h > self.canvas_h + 1
+                    x < -1
+                    or y < -1
+                    or x + w > self.canvas_w + 1
+                    or y + h > self.canvas_h + 1
                 )
                 if fully_outside:
                     self.log(
@@ -340,9 +508,7 @@ class Checker:
 
         # Layer
         if "layer" not in elem:
-            self.log(
-                page_ref, "WARNING", f'Missing layer field: element "{eid}"'
-            )
+            self.log(page_ref, "WARNING", f'Missing layer field: element "{eid}"')
 
         # Type-specific checks
         etype = elem.get("elementType")
@@ -443,12 +609,253 @@ class Checker:
                 if value.startswith("$"):
                     key = value[1:]
                     # Could be text style or table style
-                    if key not in self.theme_text_styles and key not in self.theme_table_styles:
+                    if (
+                        key not in self.theme_text_styles
+                        and key not in self.theme_table_styles
+                    ):
                         self.log(
                             page_ref,
                             "ERROR",
                             f'element "{eid}" unknown style reference "{value}" at {field_path}',
                         )
+
+    # -----------------------------------------------------------------------
+    # New quality check methods
+    # -----------------------------------------------------------------------
+
+    def check_data_visualization_opportunity(
+        self, page_ref: str, page_type: str, elements: list
+    ):
+        if page_type != "content":
+            return
+
+        has_viz = has_chart_table_timeline(elements)
+        has_timeline = has_timeline_step_nodes(elements)
+
+        for elem in elements:
+            if elem.get("elementType") != "text":
+                continue
+            content = elem.get("content") or {}
+            text = content.get("text", "")
+            if not isinstance(text, str):
+                continue
+
+            bullet_count = count_bullet_items(text)
+            if bullet_count >= 4 and not has_viz:
+                self.log(
+                    page_ref,
+                    "WARNING",
+                    f"Data opportunity: bullet list with {bullet_count} items could be visualized as chart/table/timeline",
+                )
+
+            step_count = count_numbered_steps(text)
+            if step_count >= 4 and not has_timeline:
+                self.log(
+                    page_ref,
+                    "WARNING",
+                    f"Data opportunity: numbered steps with {step_count} items could be visualized as timeline",
+                )
+
+    def check_layout_quality(self, page_ref: str, elements: list):
+        self.check_card_alignment(page_ref, elements)
+        self.check_whitespace_distribution(page_ref, elements)
+        self.check_typography_hierarchy(page_ref, elements)
+        self.check_decoration_density(page_ref, elements)
+
+    def check_card_alignment(self, page_ref: str, elements: list):
+        cards = [e for e in elements if is_card(e)]
+        if len(cards) < 2:
+            return
+
+        card_data = []
+        for card in cards:
+            x, y, w, h = [float(v) for v in card["bounds"]]
+            card_data.append((x, y, w, h))
+
+        # Group cards by row (y within 20px) and check per row
+        from itertools import groupby
+        sorted_by_y = sorted(card_data, key=lambda c: (c[1], c[0]))
+        rows = []
+        current_row = []
+        current_y = None
+        for c in sorted_by_y:
+            if current_y is None or abs(c[1] - current_y) > 20:
+                if current_row:
+                    rows.append(current_row)
+                current_row = [c]
+                current_y = c[1]
+            else:
+                current_row.append(c)
+        if current_row:
+            rows.append(current_row)
+
+        for row in rows:
+            if len(row) < 2:
+                continue
+            # Check width consistency within row
+            widths = [c[2] for c in row]
+            min_w, max_w = min(widths), max(widths)
+            if max_w - min_w > 10:
+                self.log(
+                    page_ref,
+                    "WARNING",
+                    f"Card alignment inconsistent: card widths vary by {int(max_w - min_w)}px",
+                )
+                continue
+            # Check even horizontal spacing
+            row_sorted = sorted(row, key=lambda c: c[0])
+            gaps = []
+            for i in range(1, len(row_sorted)):
+                prev_right = row_sorted[i - 1][0] + row_sorted[i - 1][2]
+                curr_left = row_sorted[i][0]
+                gap = curr_left - prev_right
+                gaps.append(gap)
+            if gaps:
+                min_gap, max_gap = min(gaps), max(gaps)
+                if max_gap - min_gap > 10:
+                    self.log(
+                        page_ref,
+                        "WARNING",
+                        f"Card alignment inconsistent: horizontal gaps vary by {int(max_gap - min_gap)}px",
+                    )
+
+    def check_whitespace_distribution(self, page_ref: str, elements: list):
+        content_elements = [
+            e
+            for e in elements
+            if e.get("elementType") in ("text", "chart", "table", "image")
+        ]
+        if not content_elements:
+            return
+
+        min_x = min(float(e["bounds"][0]) for e in content_elements)
+        min_y = min(float(e["bounds"][1]) for e in content_elements)
+        max_x = max(
+            float(e["bounds"][0]) + float(e["bounds"][2]) for e in content_elements
+        )
+        max_y = max(
+            float(e["bounds"][1]) + float(e["bounds"][3]) for e in content_elements
+        )
+
+        bbox_height = max_y - min_y
+
+        if bbox_height < 0.4 * self.canvas_h:
+            self.log(
+                page_ref,
+                "WARNING",
+                "Content may be too sparse; consider expanding or using a different layout",
+            )
+
+        if max_y < self.canvas_h / 2:
+            self.log(
+                page_ref,
+                "WARNING",
+                "Content concentrated in top half; consider vertical centering",
+            )
+
+    def check_typography_hierarchy(self, page_ref: str, elements: list):
+        font_sizes = set()
+        for elem in elements:
+            if elem.get("elementType") != "text":
+                continue
+            content = elem.get("content") or {}
+            if not isinstance(content, dict):
+                continue
+
+            font_size = None
+            style_ref = content.get("style")
+            if isinstance(style_ref, str) and style_ref.startswith("$"):
+                key = style_ref[1:]
+                resolved = self.theme_text_styles.get(key) or {}
+                font_size = resolved.get("fontSize")
+            elif isinstance(style_ref, dict):
+                font_size = style_ref.get("fontSize")
+
+            if font_size is None:
+                font_size = content.get("fontSize")
+            if font_size is None:
+                font_size = 18.0
+            else:
+                font_size = float(font_size)
+
+            font_sizes.add(font_size)
+
+        if len(font_sizes) < 2:
+            self.log(
+                page_ref,
+                "WARNING",
+                "Typography hierarchy weak; consider using display + body size contrast",
+            )
+
+    def is_decoration(self, elem: dict) -> bool:
+        if elem.get("elementType") != "shape":
+            return False
+        # Exclude cards
+        if is_card(elem):
+            return False
+        # Exclude timeline / step nodes (functional layout elements, not decorative)
+        eid = elem.get("elementId", "")
+        if eid.startswith("step-") or "timeline" in eid or "-dot" in eid or eid.startswith("node"):
+            return False
+
+        bounds = elem.get("bounds")
+        if not isinstance(bounds, (list, tuple)) or len(bounds) != 4:
+            return False
+        x, y, w, h = [float(v) for v in bounds]
+
+        opacity = elem.get("opacity")
+        if opacity is None:
+            opacity = 1.0
+        else:
+            opacity = float(opacity)
+
+        # Small shape
+        is_small = w < 150 or h < 100
+        # Near edges
+        near_edge = (
+            x < 50
+            or y < 50
+            or x + w > self.canvas_w - 50
+            or y + h > self.canvas_h - 50
+        )
+        # Low opacity
+        low_opacity = opacity < 1.0
+
+        return is_small or near_edge or low_opacity
+
+    def check_decoration_density(self, page_ref: str, elements: list):
+        decorations = [e for e in elements if self.is_decoration(e)]
+
+        if len(decorations) > 5:
+            self.log(
+                page_ref,
+                "WARNING",
+                "Too many decorations; max recommended is 3 per slide",
+            )
+
+        is_minimal = self.is_minimal_style()
+        if len(decorations) == 0 and not is_minimal:
+            self.log(
+                page_ref,
+                "WARNING",
+                "Missing decorations; most styles need 1-3 decorative elements",
+            )
+
+    def is_minimal_style(self) -> bool:
+        path_parts = set(self.pptd_path.parts)
+        return bool(path_parts & MINIMAL_STYLES)
+
+    def check_card_consistency_across_pages(self):
+        if not self.cards_across_pages:
+            return
+        widths = [bw for _, bw in self.cards_across_pages]
+        distinct_widths = sorted(set(widths))
+        if len(distinct_widths) > 1:
+            self.log(
+                "deck",
+                "WARNING",
+                f"Card border width inconsistent across pages: found widths {distinct_widths}",
+            )
 
 
 def parse_args():

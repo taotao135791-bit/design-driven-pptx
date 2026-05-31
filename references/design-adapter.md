@@ -256,6 +256,149 @@ theme:
         color: "<border color>"
 ```
 
+## 6. Layout Template System
+
+Define 6 universal content-page layout templates that apply across all 34 styles. Each template provides a proven composition pattern with PPTD element specifications.
+
+### 6.1 full-statement
+
+**When to use:** Key conclusion, manifesto statement, or single core idea that deserves maximum emphasis.
+
+**Content pattern:** 1 dominant statement + optional eyebrow label + optional supporting subtitle.
+
+**PPTD composition:**
+| Element | elementType | layer | Approximate bounds |
+|---------|-------------|-------|--------------------|
+| Background surface | shape (rect) | -1 | Full bleed or lower 60% |
+| Decorative numeral (oversized, low opacity) | text | -1 | Behind statement, 12-15% opacity |
+| Eyebrow label | text | 1 | Top-center or top-left, 11-12px uppercase |
+| Main statement | text | 1 | Center or upper-center, 44-64px, max 3 lines |
+| Accent line | shape (rect) | 2 | Under or beside statement, 80×4px |
+
+**Style-specific adaptation:**
+- `coral`, `bold-poster`: Hard-edge surface split (lower 60% colored, top 40% cream)
+- `playful`: Rotated card behind statement at -3° angle
+- `monochrome`, `vellum`: Ink-toned background numeral, no color panels
+- `8-bit-orbit`: Neon-accent underline with scanline texture
+
+### 6.2 asymmetric-split
+
+**When to use:** Topic overview with 2-3 sub-sections, or when content naturally divides into topic + elaboration.
+
+**Content pattern:** Title/heading + 2-3 body paragraphs or bullet groups.
+
+**PPTD composition:**
+| Element | elementType | layer | Approximate bounds |
+|---------|-------------|-------|--------------------|
+| Left colored panel | shape (rect) | -1 | [0, 0, 450-500, 720] |
+| Left panel title | text | 1 | Inside left panel, centered or top-aligned |
+| Left panel subtitle/label | text | 1 | Below title inside panel |
+| Right body content | text | 1 | [520-560, 80, 680-720, 560] |
+| Accent divider | shape (rect) | 2 | Between panels or top of right area |
+
+**Style-specific adaptation:**
+- `coral`, `broadside`: Hard-edge 40/60 split with coral left panel
+- `cartesian`, `cobalt-grid`: Left panel uses grid-pattern fill or secondary surface
+- `biennale-yellow`: Left panel in signature yellow, right on white
+- `capsule`: Rounded-corner left panel (use `shapeName: rect` with border radius if supported, else rect)
+
+### 6.3 three-card-grid
+
+**When to use:** Feature list, process steps (3-5 items), comparisons, or any content with parallel items.
+
+**Content pattern:** 3-5 equal items, each with icon/number + title + short description.
+
+**PPTD composition:**
+| Element | elementType | layer | Approximate bounds |
+|---------|-------------|-------|--------------------|
+| Page title | text | 1 | Top, full width |
+| Card backgrounds (3) | shape (rect) | 0 | Equal thirds: [80, 220, 340, 400], [440, 220, 340, 400], [800, 220, 340, 400] |
+| Card top borders (3) | shape (rect) | 2 | 4px height across top of each card |
+| Icon/number per card | text or shape | 1 | Top of card, 48-64px numeral or 32px icon area |
+| Card titles (3) | text | 1 | Below icon, 22-28px |
+| Card descriptions (3) | text | 1 | Below title, 16-18px body |
+
+**Style-specific adaptation:**
+- `playful`: Cards rotated ±2°, overlapping slightly
+- `coral`, `bold-poster`: Cards with 4-5px top border in primary color, white fill
+- `8-bit-orbit`: Cards with pixel-corner decorations (small squares at corners)
+- `monochrome`, `vellum`: No card borders — use subtle gray dividers or ink-toned cards
+
+### 6.4 data-dashboard
+
+**When to use:** Data-heavy pages with 3+ numeric metrics, charts, or tables.
+
+**Content pattern:** 1 primary chart/table + 2-3 stat callouts, or multiple related data visualizations.
+
+**PPTD composition:**
+| Element | elementType | layer | Approximate bounds |
+|---------|-------------|-------|--------------------|
+| Page title | text | 1 | Top |
+| Primary chart or table | chart or table | 1 | Left half: [80, 160, 560, 480] |
+| Stat callout 1 | text | 1 | Right column, upper |
+| Stat callout 2 | text | 1 | Right column, middle |
+| Stat callout 3 | text | 1 | Right column, lower |
+| Callout accent lines | shape (rect) | 2 | Under each stat number |
+
+**Style-specific adaptation:**
+- `creative-mode`: Chart uses full palette cycling; stat numbers in alternating colors
+- `monochrome`, `vellum`: Chart in ink tones + single accent; stats in dark gray
+- `8-bit-orbit`: Neon grid lines, dark background panel behind chart
+- `coral`: White card behind chart with coral top border; stats on cream background
+
+### 6.5 timeline-vertical
+
+**When to use:** Sequences, roadmaps, ladders, or any 4+ ordered steps with progression.
+
+**Content pattern:** 4-8 ordered steps, each with date/phase + title + description.
+
+**PPTD composition:**
+| Element | elementType | layer | Approximate bounds |
+|---------|-------------|-------|--------------------|
+| Central vertical line | shape (straightConnector1 or rect) | 0 | [630-650, 120, 4, 520] |
+| Timeline nodes (4+) | shape (ellipse) | 1 | Centered on line, 16-24px diameter |
+| Left-side step cards | shape (rect) + text | 0/1 | Alternating left: [120, Y, 460, 100] |
+| Right-side step cards | shape (rect) + text | 0/1 | Alternating right: [700, Y, 460, 100] |
+| Node connectors | shape (rect) | 0 | Horizontal lines from node to cards |
+
+**Style-specific adaptation:**
+- `coral`, `broadside`: Nodes in coral with cream borders; alternating cream/white cards
+- `8-bit-orbit`: Glowing neon nodes; dark card panels
+- `playful`: Nodes as rotated squares or stars
+- `monochrome`, `vellum`: Nodes as ink circles; subtle gray card backgrounds
+
+### 6.6 standard-content
+
+**When to use:** Conceptual explanations, analysis, fallback when no other template matches.
+
+**Content pattern:** Title + body paragraphs, possibly with 1 sidebar or callout box.
+
+**PPTD composition:**
+| Element | elementType | layer | Approximate bounds |
+|---------|-------------|-------|--------------------|
+| Page title | text | 1 | Top-left, 36-48px |
+| Body content | text | 1 | Main area: [80, 160, 700, 480] |
+| Optional sidebar card | shape (rect) | 0 | Right: [820, 160, 380, 480] |
+| Sidebar title | text | 1 | Inside sidebar |
+| Sidebar content | text | 1 | Inside sidebar |
+| Accent line under title | shape (rect) | 2 | [80, 140, 120, 4] |
+
+**Style-specific adaptation:**
+- All styles: This is the safest fallback — follow the style's standard title/body spacing
+- `coral`, `bold-poster`: Add coral accent line under title
+- `capsule`: Rounded sidebar card with capsule-shaped pill label
+- `cartesian`: Grid-aligned body columns
+
+### Layout Template Extraction
+
+When reading a source `design.md`, the main agent MUST:
+
+1. Look for a `layouts:` or `layout-templates:` section in the source design document.
+2. If present, extract all defined layouts (name, description, composition, bounds) and include them verbatim in the generated `design.md` under a `layouts:` catalog section.
+3. If no layouts section exists in the source, apply the 6 universal templates defined above and include them as the default layout catalog in the generated `design.md`.
+4. Map any style-specific layout variants (e.g., "coral uses 40/60 split", "playful uses rotated cards") into the `layouts:` section as `styleOverrides` or inline adaptation notes.
+5. The layout catalog must be written in the generated `design.md` so that subagents can reference it during page construction.
+
 ## 5a. CSS Unit Conversion Guide
 
 Design.md often uses CSS viewport-relative units. For PPTD (fixed 1280×720 canvas), convert as follows:
@@ -276,7 +419,7 @@ Rules:
 3. For padding/margins with clamp(): use the **middle value** or calculate from vw/vh
 4. Never use `vw/vh/em/rem` directly in PPTD — always convert to px
 
-## 6. CJK Adaptation Rules
+## 7. CJK Adaptation Rules
 
 When content is Chinese or mixed CJK+Latin:
 
@@ -288,7 +431,7 @@ When content is Chinese or mixed CJK+Latin:
 6. **Pangu spacing**: Insert space between Hanzi and Latin/digit runs (`AI 产品`)
 7. **One font per sentence**: Don't switch CJK families mid-sentence
 
-## 7. Chart Integration
+## 8. Chart Integration
 
 When content contains data points, refer to `references/chart-guide.md` for:
 - Data detection rules

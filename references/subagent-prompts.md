@@ -102,7 +102,31 @@ Use this for `task` when assigning content pages:
 
 注：{skill_path} 是 design-driven-pptx skill 所在目录。
 
-## 设计要求
+## Step 1: Layout Selection (MANDATORY)
+Before writing any elements, analyze the content and choose ONE layout from the design.md layout catalog:
+
+Content Pattern → Layout:
+- Key conclusion / manifesto statement (1 core idea) → full-statement
+- Topic overview with 2-3 sub-sections → asymmetric-split
+- Feature list / process steps / comparison (3-5 items) → three-card-grid
+- Numeric data / metrics / percentages (3+ data points) → data-dashboard
+- Sequence / roadmap / ladder (4+ ordered steps) → timeline-vertical
+- Conceptual explanation / analysis → standard-content
+
+Write your chosen layout name in a comment at the top of the page file.
+
+## Step 2: Data Visualization Checklist (MANDATORY)
+Scan the content for data patterns. If any match, you MUST use visualization:
+- Time-series / trends → line chart or bar chart
+- Category comparison (3+ items) → bar chart or table
+- Part-of-whole / percentages → pie or donut chart
+- Ordered sequence / steps → timeline or step nodes
+- Matrix / grid / keyword lists → table
+- Ranked values → horizontal bar chart
+
+Only use bullet-list text for genuinely conceptual content with no numbers, no sequence, and no comparison.
+
+## Step 3: Visual Design
 根据 design.md 中的设计系统创建内容页。关键要点：
 - 布局模式：左右分割/40-60分割/多列卡片/Sidebar/全幅内容
 - 信息密度：中高密度，每页聚焦一个核心论点

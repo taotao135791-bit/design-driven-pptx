@@ -80,13 +80,42 @@ When the checker reports TextOverflowWarning, fix in the order suggested by the 
 > **Do not excessively reduce font size to eliminate overflow, causing large blank areas within the text box** -- this is worse for aesthetics than slight overflow.
 
 
-## Programmatic Decorations (MUST FOLLOW)
+## Style-Specific Decoration Grammar
+
+Decorations are not arbitrary corner doodles — they are integral to the style's visual composition system. Every decoration must serve a compositional purpose: framing content, creating rhythm, or reinforcing the style's spatial logic.
+
+### Reference the Active Design Document
+
+Each style defines its own `decoration-grammar:` section in the active `design.md`. Before placing any decoration, read this section and follow its specific rules for:
+- Allowed shape types (e.g., L-brackets, accent lines, dot grids, scanlines)
+- Color rules (e.g., primary-only, ink-tone, neon)
+- Placement logic (e.g., corners of empty quadrants, along panel edges)
+- Density per page type (cover vs. content vs. chapter)
+
+### Universal Decoration Rules
+
+Apply these constraints across all 34 styles unless the design.md explicitly overrides:
+
+1. **Maximum 3 decorations per slide** — more creates visual noise and breaks hierarchy.
+2. **Place in corners the content doesn't occupy** — offset 20-40px from slide edges. If content fills the upper-right quadrant, place decorations in lower-left, upper-left, or lower-right.
+3. **Never place over text or in the center** — decorations must never occlude readable content or compete with the focal point.
+4. **Size range: 30-80px largest dimension** — decorations should be visible but subordinate. Background numerals may exceed this (up to 300px) only at very low opacity (≤0.15).
+5. **Density by page type:**
+   - Cover pages: 2-3 decorations (more permitted for maximal styles)
+   - Content pages: 1-2 decorations (content is king)
+   - Chapter pages: 2-3 decorations (transition pages need visual punctuation)
+
+### Procedural Requirements
 
 - **Subagents MUST NOT reference external SVG/PNG files for decorations.** All decorative elements must be composed from native `shape` and `text` elements.
 - Use `opacity` for subtle textures and overlays (0.06–0.15 for background textures, 0.3–0.5 for accents).
 - Use `shapeName: custom` + `path` for geometric decorative shapes (e.g., L-shaped corner brackets, custom frames).
 - Use `shadow` for offset shadows; set `blur: 0` for hard shadows.
 - When `design.md` defines a `decorations:` section, it describes **HOW to draw** — not file paths. Translate each decorative intent into native shapes and text elements.
+
+### Validation Warning
+
+Excessive decoration (>5 shapes marked as decorative) or missing decoration (0 shapes on non-minimal styles) will fail checker validation. Ensure every page has an intentional, restrained decoration strategy.
 
 ## Z-Order and Element Ordering (MUST FOLLOW)
 

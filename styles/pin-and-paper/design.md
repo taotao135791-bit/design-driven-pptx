@@ -657,3 +657,117 @@ Long Cang and LXGW WenKai are visually adjacent — both carry handwritten kaish
 - The paper-grain overlay uses `mix-blend-mode: multiply` on standard slides and `mix-blend-mode: screen` on ink slides. The blend mode flip is essential — using multiply on the dark ink slide turns the slide muddy.
 - The bar chart and line chart components use SVG with manually-positioned points. There is no data-binding layer.
 - The hand-drawn pin SVG is a fixed-path illustration. Re-coloring works via `currentColor`, but the pin proportions cannot be adjusted without editing the SVG path data.
+
+layouts:
+  full-statement:
+    description: "One dominant statement or conclusion fills the center of the slide. Eyebrow label above, decorative numeral or mark behind at low opacity. Used for key conclusions and manifesto moments."
+    composition:
+      - elementType: shape | text
+        layer: -1
+        notes: "Background color block or decorative numeral at low opacity"
+      - elementType: text
+        layer: 2
+        notes: "Eyebrow label (sectionLabel style)"
+      - elementType: text
+        layer: 1
+        notes: "Large display statement (heroTitle or sectionHeadline style), 50-70% width, vertically centered"
+      - elementType: shape
+        layer: 2
+        notes: "Small accent line or shape near the statement"
+  asymmetric-split:
+    description: "Left 35-40% is a colored/surfaced panel with title and subtitle. Right 60-65% is body content on default background. Used for topic overviews and chapter introductions."
+    composition:
+      - elementType: shape
+        layer: -1
+        notes: "Left panel background color block, 35-45% width, full height"
+      - elementType: text
+        layer: 1
+        notes: "Panel title (sectionHeadline), left-aligned within panel"
+      - elementType: text
+        layer: 1
+        notes: "Panel subtitle or description (body style)"
+      - elementType: text
+        layer: 1
+        notes: "Right-side body content (body style)"
+  three-card-grid:
+    description: "Three equal cards arranged horizontally. Each card has a number/icon, title, and 2-3 lines of description. Used for feature lists, process steps, and comparisons."
+    composition:
+      - elementType: shape
+        layer: 0
+        notes: "Card 1 background (3 per row), evenly spaced"
+      - elementType: text
+        layer: 1
+        notes: "Card 1 content: number/icon + title + description"
+      - elementType: shape
+        layer: 0
+        notes: "Card 2 background"
+      - elementType: text
+        layer: 1
+        notes: "Card 2 content"
+      - elementType: shape
+        layer: 0
+        notes: "Card 3 background"
+      - elementType: text
+        layer: 1
+        notes: "Card 3 content"
+  data-dashboard:
+    description: "Left half is a chart, table, or data visualization. Right half has 2-3 large stat callouts with numerals. Used for data-heavy and metrics pages."
+    composition:
+      - elementType: chart | table
+        layer: 1
+        notes: "Chart or table on left half"
+      - elementType: text
+        layer: 1
+        notes: "Stat callout 1: large numeral + label"
+      - elementType: text
+        layer: 1
+        notes: "Stat callout 2: large numeral + label"
+      - elementType: text
+        layer: 1
+        notes: "Optional stat callout 3"
+  timeline-vertical:
+    description: "Vertical timeline with nodes alternating left and right. Each node has a step number, title, and brief description. Used for sequences, roadmaps, and step-by-step processes."
+    composition:
+      - elementType: shape
+        layer: 0
+        notes: "Vertical line or connector"
+      - elementType: shape
+        layer: 1
+        notes: "Step node circles (alternating fill: outlined/filled)"
+      - elementType: text
+        layer: 1
+        notes: "Step title and description (alternating left/right)"
+  standard-content:
+    description: "Title at top, body content below, optional sidebar or accent panel. The fallback layout for conceptual and analytical content."
+    composition:
+      - elementType: text
+        layer: 2
+        notes: "Eyebrow label"
+      - elementType: text
+        layer: 1
+        notes: "Page title (columnTitle style)"
+      - elementType: shape
+        layer: 2
+        notes: "Accent line under title"
+      - elementType: text
+        layer: 1
+        notes: "Body content (body style, multi-paragraph)"
+
+decoration-grammar:
+  count-per-slide: "1–3 decorations maximum"
+  placement:
+    - "Place in corners or edges that the primary content does not occupy"
+    - "Offset 20–40px from canvas edges"
+    - "Never place over text or in the center of the slide"
+  size-range: "30–80px in the largest dimension"
+  density:
+    cover: "2–3 decorations"
+    chapter: "2–3 decorations"
+    content: "1–2 decorations"
+    final: "1–2 decorations"
+  style-specific:
+    - "One organic blob frame per slide in an unused corner (asymmetric border-radius, 3px stroke)"
+    - "One 2px-stroke scribble per slide (squiggle, star, circle, or arrow) in a margin"
+    - "Ghost-blob wallpaper at 0.08 opacity on 1 in 3 slides, anchored to a corner"
+    - "Small doodle circle or slightly rotated rectangle (5–10°) as a corner accent"
+    - "Double-stroke offset border on the primary card as the signature depth treatment

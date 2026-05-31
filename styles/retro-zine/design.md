@@ -585,3 +585,117 @@ The system's three-face contrast (Bebas display + Space Grotesk body + Caveat ha
 - The `body:hover` fade-in on the nav hint does not trigger on touch devices, which means mobile users may never see the nav hint. Treat the hint as desktop-only chrome.
 - The closing slide uses a `{colors.black}` background with `{colors.bg}` (khaki) text. The grain overlay still applies but is much less visible at 0.07 opacity over black — the print register is weaker on the closing slide than on khaki-background slides.
 - The form-field RSVP card uses hand-drawn underscores (`_________`) as the "blank line" — these are character-based, not rendered as actual `<input>` underlines, and will not align perfectly across system fonts.
+
+layouts:
+  full-statement:
+    description: "One dominant statement or conclusion fills the center of the slide. Eyebrow label above, decorative numeral or mark behind at low opacity. Used for key conclusions and manifesto moments."
+    composition:
+      - elementType: shape | text
+        layer: -1
+        notes: "Background color block or decorative numeral at low opacity"
+      - elementType: text
+        layer: 2
+        notes: "Eyebrow label (sectionLabel style)"
+      - elementType: text
+        layer: 1
+        notes: "Large display statement (heroTitle or sectionHeadline style), 50-70% width, vertically centered"
+      - elementType: shape
+        layer: 2
+        notes: "Small accent line or shape near the statement"
+  asymmetric-split:
+    description: "Left 35-40% is a colored/surfaced panel with title and subtitle. Right 60-65% is body content on default background. Used for topic overviews and chapter introductions."
+    composition:
+      - elementType: shape
+        layer: -1
+        notes: "Left panel background color block, 35-45% width, full height"
+      - elementType: text
+        layer: 1
+        notes: "Panel title (sectionHeadline), left-aligned within panel"
+      - elementType: text
+        layer: 1
+        notes: "Panel subtitle or description (body style)"
+      - elementType: text
+        layer: 1
+        notes: "Right-side body content (body style)"
+  three-card-grid:
+    description: "Three equal cards arranged horizontally. Each card has a number/icon, title, and 2-3 lines of description. Used for feature lists, process steps, and comparisons."
+    composition:
+      - elementType: shape
+        layer: 0
+        notes: "Card 1 background (3 per row), evenly spaced"
+      - elementType: text
+        layer: 1
+        notes: "Card 1 content: number/icon + title + description"
+      - elementType: shape
+        layer: 0
+        notes: "Card 2 background"
+      - elementType: text
+        layer: 1
+        notes: "Card 2 content"
+      - elementType: shape
+        layer: 0
+        notes: "Card 3 background"
+      - elementType: text
+        layer: 1
+        notes: "Card 3 content"
+  data-dashboard:
+    description: "Left half is a chart, table, or data visualization. Right half has 2-3 large stat callouts with numerals. Used for data-heavy and metrics pages."
+    composition:
+      - elementType: chart | table
+        layer: 1
+        notes: "Chart or table on left half"
+      - elementType: text
+        layer: 1
+        notes: "Stat callout 1: large numeral + label"
+      - elementType: text
+        layer: 1
+        notes: "Stat callout 2: large numeral + label"
+      - elementType: text
+        layer: 1
+        notes: "Optional stat callout 3"
+  timeline-vertical:
+    description: "Vertical timeline with nodes alternating left and right. Each node has a step number, title, and brief description. Used for sequences, roadmaps, and step-by-step processes."
+    composition:
+      - elementType: shape
+        layer: 0
+        notes: "Vertical line or connector"
+      - elementType: shape
+        layer: 1
+        notes: "Step node circles (alternating fill: outlined/filled)"
+      - elementType: text
+        layer: 1
+        notes: "Step title and description (alternating left/right)"
+  standard-content:
+    description: "Title at top, body content below, optional sidebar or accent panel. The fallback layout for conceptual and analytical content."
+    composition:
+      - elementType: text
+        layer: 2
+        notes: "Eyebrow label"
+      - elementType: text
+        layer: 1
+        notes: "Page title (columnTitle style)"
+      - elementType: shape
+        layer: 2
+        notes: "Accent line under title"
+      - elementType: text
+        layer: 1
+        notes: "Body content (body style, multi-paragraph)"
+
+decoration-grammar:
+  count-per-slide: "1–3 decorations maximum"
+  placement:
+    - "Place in corners or edges that the primary content does not occupy"
+    - "Offset 20–40px from canvas edges"
+    - "Never place over text or in the center of the slide"
+  size-range: "30–80px in the largest dimension"
+  density:
+    cover: "2–3 decorations"
+    chapter: "2–3 decorations"
+    content: "1–2 decorations"
+    final: "1–2 decorations"
+  style-specific:
+    - "L-shaped pixel corner brackets (4px stroke, neon or accent color) framing cards or regions"
+    - "CRT scanline overlay on dark backgrounds (0.04 opacity)"
+    - "Pixel-grid background pattern (40px grid, 0.07 opacity) on dark or colored surfaces"
+    - "Vintage texture overlay (grain, vignette, or noise) at 0.03–0.05 opacity"
+    - "Small pixel-particle or starfield squares in unused margins (1–2px, low opacity)

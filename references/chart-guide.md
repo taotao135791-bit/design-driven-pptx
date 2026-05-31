@@ -2,6 +2,26 @@
 
 Guide for AI agents to automatically detect data points in content and generate appropriate charts.
 
+## 0. Style-Specific Chart Styling
+
+Charts must inherit the design system's color palette, not use generic default colors.
+
+### By Style Category
+
+| Style Category | Styles | Chart Color Strategy |
+|----------------|--------|----------------------|
+| Monochrome | `monochrome`, `vellum` | Use ink tones (`$ink`, `$text`, `$textLight`) + single accent (`$primary`). Avoid multiple bright colors. |
+| Multi-color | `creative-mode`, `capsule`, `playful` | Cycle through the style's full palette (`$primary`, `$primaryDark`, `$surfaceAlt`, `$textLight`). |
+| Neon | `8-bit-orbit` | Use neon colors (`$primary`, `$primaryDark`) with dark grid lines (`$ink` or `#333333`). Background panels should be dark. |
+| Warm editorial | `coral`, `playful`, `biennale-yellow` | Use the primary color + darker variant for emphasis; cream/white backgrounds for chart areas. |
+| Cool professional | `blue-professional`, `cobalt-grid`, `cartesian` | Use blue primary + navy secondary; clean white/cream chart backgrounds. |
+
+### Axis and Grid Styling Rules
+
+- For dark-background styles (`8-bit-orbit`, dark variants): use light axis labels (`$white` or `$textLight`) and dark grid lines.
+- For light-background styles: use dark axis labels (`$text` or `$ink`) and subtle light grid lines (`#E5E5E5` or `$textLight`).
+- Always inherit typography from the design system for axis labels (use `body` font, not `display` font).
+
 ## 1. Data Detection
 
 When processing content for a `.page` file, scan for numeric data points:
@@ -197,6 +217,164 @@ dataLabels:
     growthRate: {type: line, axis: secondary, smooth: true, width: 2}
   yAxis: {title: "Amount (10K)", numberFormat: "#,##0"}
   secondaryAxis: {title: "Growth Rate", numberFormat: "0%", min: 0, max: 0.5}
+```
+
+### Horizontal Bar Chart (Ranked Comparison)
+
+```yaml
+- elementId: chart-ranking
+  elementType: chart
+  bounds: [80, 200, 600, 380]
+  type: bar
+  data:
+    - {market: "North America", share: 42}
+    - {market: "Europe", share: 28}
+    - {market: "Asia Pacific", share: 19}
+    - {market: "Latin America", share: 7}
+    - {market: "Middle East", share: 4}
+  x: market
+  y: [share]
+  colors: ["$primary"]
+  options:
+    direction: horizontal
+  xAxis:
+    gridLine: false
+  yAxis:
+    gridLine: {style: dash, color: "#E5E5E5"}
+  legend: false
+```
+
+### Simple Table (Keyword Matrix)
+
+```yaml
+- elementId: keyword-matrix
+  elementType: table
+  bounds: [80, 200, 800, 360]
+  rows:
+    - - content: {text: "Dimension", fontSize: 14, bold: true}
+      - content: {text: "Keyword A", fontSize: 14, bold: true}
+      - content: {text: "Keyword B", fontSize: 14, bold: true}
+      - content: {text: "Keyword C", fontSize: 14, bold: true}
+    - - content: {text: "Relevance", fontSize: 14}
+      - content: {text: "High", fontSize: 14}
+      - content: {text: "Medium", fontSize: 14}
+      - content: {text: "High", fontSize: 14}
+    - - content: {text: "Search Volume", fontSize: 14}
+      - content: {text: "12K", fontSize: 14}
+      - content: {text: "8K", fontSize: 14}
+      - content: {text: "15K", fontSize: 14}
+    - - content: {text: "Difficulty", fontSize: 14}
+      - content: {text: "Low", fontSize: 14}
+      - content: {text: "High", fontSize: 14}
+      - content: {text: "Medium", fontSize: 14}
+  style:
+    fontSize: 14
+    fontFamily: "<body font>"
+    headerFill: "$primary"
+    headerColor: "$white"
+    headerBold: true
+    bodyFill: ["$white", "$background"]
+    bodyColor: "$ink"
+    border:
+      style: solid
+      width: 1
+      color: "$textLight"
+```
+
+### Timeline / Step Nodes (Sequence)
+
+```yaml
+# Use native shapes for timeline nodes and lines when chart type is unavailable
+# or when steps need rich annotation beyond chart capabilities.
+
+# Central timeline line
+- elementId: timeline-line
+  elementType: shape
+  layer: 0
+  bounds: [100, 360, 1080, 4]
+  shapeName: rect
+  fill: {type: solid, color: "$primary"}
+
+# Step node 1
+- elementId: node-1
+  elementType: shape
+  layer: 1
+  bounds: [140, 348, 24, 24]
+  shapeName: ellipse
+  fill: {type: solid, color: "$primary"}
+
+- elementId: label-1
+  elementType: text
+  layer: 1
+  bounds: [100, 300, 104, 40]
+  content:
+    fontSize: 12
+    color: "$text"
+    text: "<p>Phase 1</p>"
+    wrap: false
+
+- elementId: desc-1
+  elementType: text
+  layer: 1
+  bounds: [100, 380, 200, 60]
+  content:
+    fontSize: 14
+    color: "$ink"
+    text: "<p>Discovery &amp; Research</p>"
+
+# Step node 2
+- elementId: node-2
+  elementType: shape
+  layer: 1
+  bounds: [540, 348, 24, 24]
+  shapeName: ellipse
+  fill: {type: solid, color: "$primaryDark"}
+
+- elementId: label-2
+  elementType: text
+  layer: 1
+  bounds: [500, 300, 104, 40]
+  content:
+    fontSize: 12
+    color: "$text"
+    text: "<p>Phase 2</p>"
+    wrap: false
+
+- elementId: desc-2
+  elementType: text
+  layer: 1
+  bounds: [500, 380, 200, 60]
+  content:
+    fontSize: 14
+    color: "$ink"
+    text: "<p>Design &amp; Prototyping</p>"
+
+# Step node 3
+- elementId: node-3
+  elementType: shape
+  layer: 1
+  bounds: [940, 348, 24, 24]
+  shapeName: ellipse
+  fill: {type: solid, color: "$surfaceAlt"}
+
+- elementId: label-3
+  elementType: text
+  layer: 1
+  bounds: [900, 300, 104, 40]
+  content:
+    fontSize: 12
+    color: "$text"
+    text: "<p>Phase 3</p>"
+    wrap: false
+
+- elementId: desc-3
+  elementType: text
+  layer: 1
+  bounds: [900, 380, 200, 60]
+  content:
+    fontSize: 14
+    color: "$ink"
+    text: "<p>Build &amp; Launch</p>"
 ```
 
 ## 5. Content-Agent Chart Detection Prompt

@@ -203,6 +203,24 @@ components:
     boxShadow: "{shadows.default}"
     padding: "{spacing.pad-card-md}"
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for daisy-days"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for daisy-days"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for daisy-days"
+  pattern-dots:
+    file: "decorations/pattern-dots.svg"
+    type: "pattern"
+    description: "dots texture pattern for daisy-days"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

@@ -222,6 +222,24 @@ components:
     opacity: 0.6
     description: "Em-dash prefix via ::before, dimmed 40% to read as neutral."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for cobalt-grid"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for cobalt-grid"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for cobalt-grid"
+  pattern-grid:
+    file: "decorations/pattern-grid.svg"
+    type: "pattern"
+    description: "grid texture pattern for cobalt-grid"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

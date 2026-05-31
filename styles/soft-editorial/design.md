@@ -266,6 +266,20 @@ components:
     color: "{colors.ink-soft}"
     description: "Two-column italic serif footer running across the bottom — date left, publication name right."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for soft-editorial"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for soft-editorial"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for soft-editorial"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

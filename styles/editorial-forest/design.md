@@ -196,6 +196,20 @@ components:
     borderRadius: "2px"
     description: "Small filled square preceding a mono legend label. 2px corner radius is the smallest radius in the system."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for editorial-forest"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for editorial-forest"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for editorial-forest"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

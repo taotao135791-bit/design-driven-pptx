@@ -190,6 +190,20 @@ components:
     color: "{colors.teal}"
     description: "A 7vw italic Cormorant Garamond opening quote glyph in dusty teal, sitting centered above a centered pull-quote. The teal color is the system's only large-graphic accent."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for vellum"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for vellum"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for vellum"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

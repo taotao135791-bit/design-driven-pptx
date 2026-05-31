@@ -226,6 +226,24 @@ components:
     boxShadow: "4px 4px 0 {colors.deep-navy}"
     description: "Short yellow rule with navy offset shadow, used as a separator under quote bodies."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for 8-bit-orbit"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for 8-bit-orbit"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for 8-bit-orbit"
+  pattern-starfield:
+    file: "decorations/pattern-starfield.svg"
+    type: "pattern"
+    description: "starfield texture pattern for 8-bit-orbit"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

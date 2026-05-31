@@ -234,6 +234,20 @@ components:
   radial-glow:
     description: "Soft radial gradient wash anchored to a corner or center of a slide background. Uses one of the candy palette colors at 6–15% opacity, blended into the cream canvas. Provides atmospheric warmth without changing the surface color."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for capsule"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for capsule"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for capsule"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

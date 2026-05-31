@@ -18,6 +18,7 @@ c. <work-dir>/design.md - 主agent产出的设计文档
 d. <work-dir>/<name>.pptd - 主agent产出的主入口文件
 e. <work-dir>/outline.md - 主agent产出的内容大纲
 f. {skill_path}/guideline/subagent/attention.md - 子agent注意事项
+g. {skill_path}/references/chart-guide.md - 图表生成指南（如内容含数据）
 
 注：{skill_path} 是 design-driven-pptx skill 所在目录。如果 skill 安装在用户 skills 目录下，路径为 /app/.user/skills/design-driven-pptx/；如果在当前工作目录，使用相对路径。
 
@@ -52,6 +53,7 @@ Use this for `task` when assigning cover/TOC/chapter/final pages:
 3. <work-dir>/design.md
 4. <work-dir>/<name>.pptd
 5. <work-dir>/outline.md
+6. {skill_path}/references/chart-guide.md （如内容含数据点）
 
 注：{skill_path} 是 design-driven-pptx skill 所在目录。
 
@@ -105,6 +107,11 @@ Use this for `task` when assigning content pages:
 - 布局模式：左右分割/40-60分割/多列卡片/Sidebar/全幅内容
 - 信息密度：中高密度，每页聚焦一个核心论点
 - 装饰：按设计系统的组件规范实现（卡片边框、accent线、装饰数字等）
+- **SVG装饰**：如果 design.md 定义了 decorations，在合适的页面使用装饰SVG元素
+  - 封面页可使用 cover-bg.svg 作为背景装饰
+  - 章节页可使用 chapter-accent.svg 作为框架装饰
+  - 内容页可使用 divider.svg 作为分隔线，pattern-hatch.svg 作为区域纹理
+- **数据可视化**：如果内容中有3+个相关数据点（如"Q1: 120, Q2: 132, Q3: 101"），按 chart-guide.md 生成 chart 元素
 - 内容100%忠实原文，未增删
 - pageType: content
 - content.text 使用 block scalar (|)

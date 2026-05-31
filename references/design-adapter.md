@@ -95,8 +95,40 @@ Design pattern → PPTD implementation:
 
 Design pattern → PPTD implementation:
 - "Oversized background numeral at 12% opacity" → Text element with opacity: 0.12, large fontSize
-- "45° diagonal hatch pattern" → Shape with gradient fill simulating the pattern, or skip if too complex
+- "45° diagonal hatch pattern" → Use decorations/pattern-hatch.svg via `elementType: image` with opacity, or shape with gradient fill
 - "Accent line (80×4 rectangle)" → Shape rect at specified size with solid fill
+
+### SVG Decorations
+
+If the design.md defines a `decorations:` section, map each decoration to PPTD elements:
+
+| Decoration Type | PPTD Implementation |
+|-----------------|---------------------|
+| pattern (e.g., hatch) | `elementType: image`, `src: "styles/<name>/decorations/pattern-hatch.svg"`, set `opacity` for subtlety |
+| background (e.g., cover-bg) | `elementType: image`, `src: "styles/<name>/decorations/cover-bg.svg"`, full-slide bounds |
+| accent (e.g., chapter frame) | `elementType: image`, `src: "styles/<name>/decorations/chapter-accent.svg"`, placed with opacity |
+| divider | `elementType: image`, `src: "styles/<name>/decorations/divider.svg"`, placed between content sections |
+
+Rules:
+- SVG paths in `src` are relative to the design.md file location
+- Use `opacity` to control subtlety (0.06–0.15 for textures, 0.3–0.5 for accents)
+- For repeating patterns (hatch), use `fit: {mode: fill}` on the image element
+- SVG decorations inherit the design system's color through the SVG file itself
+
+## 3a. Dynamic Color Adaptation (Optional)
+
+Before finalizing the theme, detect content tone and adapt colors:
+
+1. **Detect tone** from content source keywords (read `references/dynamic-color-adaptation.md`):
+   - serious → reduce saturation 30%
+   - creative → increase saturation 20%, boost contrast 15%
+   - data_intensive → slight desaturation, boost contrast 10%
+
+2. **Apply adjustments** to `primary` and `primaryDark` colors only.
+
+3. **Validate contrast** — ensure adapted colors maintain WCAG AA against background.
+
+Use `scripts/color_utils.py` for standalone color operations, or apply manually in the theme YAML.
 
 ## 4. Component Mapping
 
@@ -195,3 +227,11 @@ When content is Chinese or mixed CJK+Latin:
 5. **No period on headlines**: Strip `。` from display strings
 6. **Pangu spacing**: Insert space between Hanzi and Latin/digit runs (`AI 产品`)
 7. **One font per sentence**: Don't switch CJK families mid-sentence
+
+## 7. Chart Integration
+
+When content contains data points, refer to `references/chart-guide.md` for:
+- Data detection rules
+- Chart type selection flow
+- Color inheritance from theme
+- PPTD chart syntax examples

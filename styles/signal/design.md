@@ -193,6 +193,24 @@ components:
     padding: "{spacing.gap-md}"
     description: "Cycle/process step card with a 2px gold rule at top, gold numeral, serif title, sans body."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for signal"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for signal"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for signal"
+  pattern-grid:
+    file: "decorations/pattern-grid.svg"
+    type: "pattern"
+    description: "grid texture pattern for signal"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

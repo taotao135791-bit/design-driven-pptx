@@ -306,6 +306,20 @@ components:
     background: "{colors.green}"
     color: "{colors.cream}"
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for creative-mode"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for creative-mode"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for creative-mode"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

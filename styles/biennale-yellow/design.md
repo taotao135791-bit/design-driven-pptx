@@ -222,6 +222,20 @@ components:
     textAlign: right
     description: "Large serif date or date-range stacked at top-right of cover surfaces. Uses an en-dash to indicate spans."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for biennale-yellow"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for biennale-yellow"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for biennale-yellow"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

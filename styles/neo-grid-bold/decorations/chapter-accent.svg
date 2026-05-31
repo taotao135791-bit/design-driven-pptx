@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <polyline points="20,80 20,20 80,20" fill="none" stroke="#E6FF3D" stroke-width="5"/>
+  <polyline points="320,20 380,20 380,80" fill="none" stroke="#E6FF3D" stroke-width="5"/>
+  <polyline points="380,320 380,380 320,380" fill="none" stroke="#E6FF3D" stroke-width="5"/>
+  <polyline points="80,380 20,380 20,320" fill="none" stroke="#E6FF3D" stroke-width="5"/>
+  <rect x="160" y="198" width="80" height="4" fill="#E6FF3D"/>
+  <circle cx="200" cy="100" r="5" fill="#0A0A0A" opacity="0.12"/>
+  <circle cx="200" cy="300" r="5" fill="#0A0A0A" opacity="0.12"/>
+</svg>

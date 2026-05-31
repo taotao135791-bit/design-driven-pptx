@@ -306,6 +306,20 @@ components:
     typography: "{typography.footer}"
     description: "Bottom chrome strip with date left and deck name right. Uppercase Barlow Condensed 600 at 0.75 opacity."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for stencil-tablet"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for stencil-tablet"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for stencil-tablet"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

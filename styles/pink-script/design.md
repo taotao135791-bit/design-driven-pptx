@@ -300,6 +300,24 @@ components:
     color: "{colors.pink}"
     description: "Small pink right-arrow SVG used between process steps."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for pink-script"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for pink-script"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for pink-script"
+  pattern-grain:
+    file: "decorations/pattern-grain.svg"
+    type: "pattern"
+    description: "grain texture pattern for pink-script"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

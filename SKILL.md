@@ -71,13 +71,15 @@ python3 {skill_path}/scripts/pptd2pptx.py <work-dir>/<name>.pptd [<output.pptx>]
 Requirements:
 - `python-pptx` (install via `pip install python-pptx`)
 - `PyYAML` (install via `pip install pyyaml`)
+- `resvg` (optional, for SVG decoration support: `pip install resvg`)
 
 The converter supports:
 - Text boxes with rich HTML (`<p>`, `<span>`, `<strong>`, `<em>`, `<u>`, `<s>`, `<sup>`, `<sub>`, `<a>`, `<ul>`, `<ol>`, `<li>`)
 - Shapes (rect, roundRect, ellipse, triangle, diamond, star5, plus, arrow, flowchart shapes, etc.)
 - Images (local paths and URLs)
 - Tables with theme styling
-- Charts (rendered as placeholder; full chart rendering requires manual enhancement)
+- Charts (bar, line, pie, scatter, bubble, combo — fully rendered with theme colors)
+- SVG Decorations (pattern, background, accent, divider — auto-rendered to PNG via resvg)
 - Icons (rendered as placeholder label)
 - Backgrounds (solid, gradient, image)
 - Theme colors & text styles
@@ -86,9 +88,11 @@ The converter supports:
 ## Progressive Loading
 
 Load references only when needed:
-- Before step 2: read `references/design-adapter.md`
+- Before step 2: read `references/design-adapter.md` (includes dynamic color adaptation)
 - Before step 3: read `references/main-agent-workflow.md` (step 3 section)
 - Before step 5: read `references/subagent-prompts.md`
+- For chart generation: read `references/chart-guide.md`
+- For dynamic colors: read `references/dynamic-color-adaptation.md`
 - For PPTD format: read `format/pptd.md`
 - For subagent notes: read `guideline/subagent/attention.md`
 - For outline template: read `assets/outline-template.md`

@@ -224,6 +224,24 @@ components:
     color: "{colors.ink}"
     opacity: 0.85
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for neo-grid-bold"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for neo-grid-bold"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for neo-grid-bold"
+  pattern-grid:
+    file: "decorations/pattern-grid.svg"
+    type: "pattern"
+    description: "grid texture pattern for neo-grid-bold"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

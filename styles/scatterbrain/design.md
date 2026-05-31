@@ -217,6 +217,24 @@ components:
     cursor: "URL data-svg red-and-white thumbtack, 24×24, hotspot 12×12"
     description: "Browser cursor replaced with a tiny SVG thumbtack circle (red outer, white center) when hovering over any slide. Reinforces the 'pinning ideas to a board' metaphor."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for scatterbrain"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for scatterbrain"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for scatterbrain"
+  pattern-dots:
+    file: "decorations/pattern-dots.svg"
+    type: "pattern"
+    description: "dots texture pattern for scatterbrain"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

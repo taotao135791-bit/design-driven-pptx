@@ -272,6 +272,20 @@ components:
   ornament-numeral-panel:
     description: "A full-bleed inverse panel (ink background) holding a single oversized Bodoni numeral (~460px weight 900) centered. Used as a section-opener device. Topbar / footline strings sit absolutely positioned in the panel corners."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for emerald-editorial"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for emerald-editorial"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for emerald-editorial"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

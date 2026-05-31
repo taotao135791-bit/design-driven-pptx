@@ -147,6 +147,20 @@ components:
     background: "near-black-alt on dark, acid-yellow-alt on yellow"
     description: "Warm-toned rectangular placeholder for images, centered mono label inside, no border on dark / hairline border on yellow."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for studio"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for studio"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for studio"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

@@ -237,6 +237,24 @@ components:
     letterSpacing: 0.06em
     description: "Mono-font color chip used inline in tabular ledger rows to tag a row's category. Fill pulls from green / red-stamp / orange / pink / blue as a categorical palette extension."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for retro-zine"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for retro-zine"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for retro-zine"
+  pattern-grain:
+    file: "decorations/pattern-grain.svg"
+    type: "pattern"
+    description: "grain texture pattern for retro-zine"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

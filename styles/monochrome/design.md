@@ -173,6 +173,20 @@ components:
     color: "{colors.ink-graphite}"
     description: "Hairline-bordered cream void with a centered mono label. Used until photography is dropped in."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for monochrome"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for monochrome"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for monochrome"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

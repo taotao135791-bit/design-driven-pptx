@@ -294,6 +294,24 @@ components:
     color: "{colors.ink}"
     description: "Hand-script numeral used as step numbers in process diagrams and ordered CTA steps. The script face makes ordering feel hand-counted, not algorithmic."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for pin-and-paper"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for pin-and-paper"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for pin-and-paper"
+  pattern-grain:
+    file: "decorations/pattern-grain.svg"
+    type: "pattern"
+    description: "grain texture pattern for pin-and-paper"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

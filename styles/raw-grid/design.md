@@ -192,6 +192,24 @@ components:
     background: "{colors.green}"
     transition: "background 0.15s"
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for raw-grid"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for raw-grid"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for raw-grid"
+  pattern-grid:
+    file: "decorations/pattern-grid.svg"
+    type: "pattern"
+    description: "grid texture pattern for raw-grid"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

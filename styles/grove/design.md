@@ -201,6 +201,20 @@ components:
     activeTransform: "scale(1.4)"
     description: "Small white dots at the bottom of the viewport indicating slide position. The fixed counter (#slide-counter) is intentionally disabled — the slide-foot already shows NN / TT."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for grove"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for grove"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for grove"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

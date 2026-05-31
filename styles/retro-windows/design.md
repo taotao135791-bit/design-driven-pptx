@@ -236,6 +236,20 @@ components:
     thumbBorder: "2px solid {colors.white} (top/left) + 2px solid {colors.black} (right/bottom)"
     description: "Custom webkit scrollbar styled as a beveled-raised gray thumb on a flat gray track. Width is fixed 16px to match Win9x default."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for retro-windows"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for retro-windows"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for retro-windows"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

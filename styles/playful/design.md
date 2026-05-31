@@ -187,6 +187,24 @@ components:
     opacity: 0.08
     description: "Oversized organic blob at very low opacity placed behind content as atmospheric wallpaper. Functions like a watermark cloud."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for playful"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for playful"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for playful"
+  pattern-dots:
+    file: "decorations/pattern-dots.svg"
+    type: "pattern"
+    description: "dots texture pattern for playful"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

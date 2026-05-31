@@ -196,6 +196,24 @@ components:
   chart-grid-color: "{colors.bg-secondary}"
   chart-axis-tick-color: "{colors.accent}"
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for cartesian"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for cartesian"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for cartesian"
+  pattern-grid:
+    file: "decorations/pattern-grid.svg"
+    type: "pattern"
+    description: "grid texture pattern for cartesian"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

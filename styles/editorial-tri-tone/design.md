@@ -284,6 +284,20 @@ components:
     border: "4px solid {colors.butter}"
     background: "{colors.burgundy}"
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for editorial-tri-tone"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for editorial-tri-tone"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for editorial-tri-tone"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

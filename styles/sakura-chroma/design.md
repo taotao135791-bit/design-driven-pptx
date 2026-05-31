@@ -271,6 +271,24 @@ components:
     checkedMarker: "× (cream-colored multiplication sign in Big Shoulders 900)"
     description: "Ink-bordered square checkbox used in spec-checklists and the cover footer. Checked state fills ink and centers a cream multiplication-sign glyph (not a checkmark)."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for sakura-chroma"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for sakura-chroma"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for sakura-chroma"
+  pattern-dots:
+    file: "decorations/pattern-dots.svg"
+    type: "pattern"
+    description: "dots texture pattern for sakura-chroma"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

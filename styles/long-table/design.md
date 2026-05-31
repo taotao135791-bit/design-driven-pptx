@@ -242,6 +242,24 @@ components:
     rowPad: "clamp(11px, 1.3vh, 18px) 0"
     borderBottom: "1px solid {colors.ink-32}"
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for long-table"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for long-table"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for long-table"
+  pattern-dots:
+    file: "decorations/pattern-dots.svg"
+    type: "pattern"
+    description: "dots texture pattern for long-table"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

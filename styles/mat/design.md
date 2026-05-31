@@ -154,6 +154,20 @@ components:
     gradient: "radial-gradient(ellipse at 70% 80%, rgba(122, 78, 36, 0.28) 0%, rgba(80, 50, 20, 0.14) 40%, transparent 70%)"
     description: "The wood-brown atmospheric glow that lives on every dark slide via ::before. Non-optional on dark surfaces; defines the warmth of the system."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for mat"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for mat"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for mat"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

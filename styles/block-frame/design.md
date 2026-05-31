@@ -251,6 +251,20 @@ components:
     boxShadow: "{shadows.small}"
     description: "Persistent slide counter pill at bottom-left. Space Grotesk uppercase NN / NN format."
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for block-frame"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for block-frame"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for block-frame"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

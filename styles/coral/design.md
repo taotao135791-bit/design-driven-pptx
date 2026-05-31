@@ -256,6 +256,28 @@ components:
     description: "Decorative repeating-pattern overlay applied to feature regions — typically 90° vertical hatch in ink at 10% opacity on coral gradient backgrounds. Separate from the 45° diagonal-hatch which is the system's primary texture."
   bar-fill:
     description: "Chart.js horizontal bar fills use solid coral (#E85D5D) as the primary series color, with a darker coral (#D44A4A) for comparison or secondary series."
+
+decorations:
+  pattern-hatch:
+    file: "decorations/pattern-hatch.svg"
+    type: "pattern"
+    description: "45° diagonal hatch pattern in 6%-opacity black. Tileable SVG for coral region overlays."
+    usage: "Use as shape fill (type: image) or background overlay on coral regions."
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background with coral top-section, zigzag line, accent rules, and oversized circles."
+    usage: "Place as full-slide background image on cover.page."
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent — coral corner brackets, center line, and decorative dots."
+    usage: "Overlay on chapter pages at 30-50% opacity as decorative frame."
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider with coral center dot and ink lines."
+    usage: "Use between content sections on content pages."
 ---
 
 ## Frontend Slides Fixed-Stage Policy

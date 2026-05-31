@@ -390,6 +390,24 @@ components:
     borderRadius: 50%
     background: "{colors.orange}"
 ---
+decorations:
+  cover-bg:
+    file: "decorations/cover-bg.svg"
+    type: "background"
+    description: "Cover page decorative background for peoples-platform"
+  chapter-accent:
+    file: "decorations/chapter-accent.svg"
+    type: "accent"
+    description: "Chapter transition page accent for peoples-platform"
+  divider:
+    file: "decorations/divider.svg"
+    type: "divider"
+    description: "Horizontal divider for peoples-platform"
+  pattern-grain:
+    file: "decorations/pattern-grain.svg"
+    type: "pattern"
+    description: "grain texture pattern for peoples-platform"
+
 
 ## Frontend Slides Fixed-Stage Policy
 

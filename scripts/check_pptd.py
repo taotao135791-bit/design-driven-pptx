@@ -10,6 +10,7 @@ import os
 import re
 import sys
 from pathlib import Path
+from typing import Optional
 
 import yaml
 
@@ -84,7 +85,7 @@ try:
     KNOWN_SHAPES.update(
         name for name in dir(MSO_SHAPE) if not name.startswith("_")
     )
-except Exception:
+except (ImportError, AttributeError):
     pass
 
 # ---------------------------------------------------------------------------
@@ -340,7 +341,7 @@ def collect_refs(obj, path=""):
 
 
 class Checker:
-    def __init__(self, pptd_path: Path, pages_filter: set[str] | None = None):
+    def __init__(self, pptd_path: Path, pages_filter: Optional[set[str]] = None):
         self.pptd_path = pptd_path
         self.base_dir = pptd_path.parent
         self.pages_filter = pages_filter
@@ -369,7 +370,7 @@ class Checker:
         # 1. Load master
         try:
             master = load_yaml(self.pptd_path)
-        except Exception as e:
+        except (yaml.YAMLError, OSError, UnicodeDecodeError) as e:
             print(f"  [ERROR] Failed to parse {self.pptd_path}: {e}")
             self.errors += 1
             print(f"\nSummary: {self.errors} errors, {self.warnings} warnings")
@@ -429,7 +430,7 @@ class Checker:
 
         try:
             data = load_yaml(page_path)
-        except Exception as e:
+        except (yaml.YAMLError, OSError, UnicodeDecodeError) as e:
             self.log(page_ref, "ERROR", f"Failed to parse {page_ref}: {e}")
             return
 
@@ -779,7 +780,8 @@ class Checker:
                 continue
 
             font_size = None
-            style_ref = content.get("style")
+            # Check styleRef at element level first (PPTD standard)
+            style_ref = elem.get("styleRef") or content.get("style")
             if isinstance(style_ref, str) and style_ref.startswith("$"):
                 key = style_ref[1:]
                 resolved = self.theme_text_styles.get(key) or {}
@@ -788,7 +790,7 @@ class Checker:
                 font_size = style_ref.get("fontSize")
 
             if font_size is None:
-                font_size = content.get("fontSize")
+                font_size = elem.get("fontSize") or content.get("fontSize")
             if font_size is None:
                 font_size = 18.0
             else:
@@ -861,7 +863,7 @@ class Checker:
         path_parts = set(self.pptd_path.parts)
         return bool(path_parts & MINIMAL_STYLES)
 
-    def _resolve_color(self, color_str: str) -> str | None:
+    def _resolve_color(self, color_str: str) -> Optional[str]:
         """Resolve a color reference ($primary) to its hex value."""
         if not color_str or not isinstance(color_str, str):
             return None
@@ -915,7 +917,7 @@ class Checker:
         
         try:
             bg_lum = _luminance(bg_hex)
-        except Exception:
+        except (ValueError, IndexError):
             return
         
         for elem in elements:
@@ -935,7 +937,7 @@ class Checker:
                         try:
                             current_bg_hex = resolved
                             current_bg_lum = _luminance(current_bg_hex)
-                        except Exception:
+                        except (ValueError, IndexError):
                             pass
             
             # Check text color
@@ -954,7 +956,7 @@ class Checker:
                                     "WARNING",
                                     f"Element '{eid}' text color ({resolved}) may have poor contrast ({ratio:.1f}:1) against background ({current_bg_hex})",
                                 )
-                        except Exception:
+                        except (ValueError, IndexError):
                             pass
 
     def check_card_consistency_across_pages(self):

@@ -1,0 +1,93 @@
+pageType: content
+elements:
+  - elementType: shape
+    shapeName: rect
+    bounds: [0, 0, 1280, 720]
+    layer: -1
+    fill:
+      type: solid
+      color: "$background"
+  - elementType: text
+    bounds: [120, 60, 600, 30]
+    layer: 1
+    styleRef: "$sectionLabel"
+    content:
+      text: |
+        <p>QUARTERLY REVENUE</p>
+  - elementType: text
+    bounds: [120, 110, 600, 50]
+    layer: 1
+    styleRef: "$sectionHeadline"
+    content:
+      text: |
+        <p>Revenue by Quarter</p>
+  - elementType: chart
+    chartType: bar
+    bounds: [120, 190, 700, 420]
+    layer: 1
+    data:
+      categories: [Q1 2025, Q2 2025, Q3 2025, Q4 2025]
+      series:
+        - name: Product A
+          values: [120, 195, 160, 240]
+        - name: Product B
+          values: [85, 140, 190, 210]
+    seriesStyle:
+      smooth: false
+      lineWidth: 3
+      marker: circle
+    legend: true
+    animation:
+      type: wipe
+      direction: right
+      trigger: onClick
+      duration: 800
+  - elementType: shape
+    shapeName: rect
+    bounds: [900, 190, 300, 120]
+    layer: 0
+    fill:
+      type: solid
+      color: "$surface"
+    border:
+      style: solid
+      width: 1
+      color: "$border"
+  - elementType: text
+    bounds: [920, 210, 260, 30]
+    layer: 1
+    styleRef: "$bodySm"
+    content:
+      text: |
+        <p><span style="color:#c8524a">↑ 47%</span> YoY Growth</p>
+  - elementType: text
+    bounds: [920, 250, 260, 40]
+    layer: 1
+    styleRef: "$bodySm"
+    content:
+      text: |
+        <p>Total: $1.34M</p>
+  - elementType: shape
+    shapeName: rect
+    bounds: [900, 340, 300, 270]
+    layer: 0
+    fill:
+      type: solid
+      color: "$surface"
+    border:
+      style: solid
+      width: 1
+      color: "$border"
+  - elementType: chart
+    chartType: pie
+    bounds: [920, 360, 260, 220]
+    layer: 1
+    data:
+      categories: [Product A, Product B, Product C]
+      series:
+        - name: Share
+          values: [45, 35, 20]
+    animation:
+      type: fade
+      trigger: afterPrevious
+      duration: 600

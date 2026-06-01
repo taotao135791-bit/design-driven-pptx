@@ -1,0 +1,73 @@
+theme:
+  colors:
+    primary: "#c8524a"
+    primaryDark: "#a33d36"
+    primaryText: "#c8524a"
+    background: "#192b1b"
+    surface: "#1e3221"
+    surfaceAlt: "#243a28"
+    ink: "#d4cfbf"
+    text: "#b8b2a0"
+    textLight: "#8a8476"
+    white: "#e8e4d6"
+    border: "#d4cfbf1e"
+    borderLight: "#192b1b24"
+  textStyles:
+    heroTitle:
+      fontSize: 56
+      color: "$ink"
+      fontFamily: "Playfair Display, Noto Serif SC"
+      lineHeight: 1.1
+      letterSpacing: 2
+    sectionHeadline:
+      fontSize: 36
+      color: "$ink"
+      fontFamily: "Playfair Display, Noto Serif SC"
+      lineHeight: 1.15
+      letterSpacing: 1
+    columnTitle:
+      fontSize: 24
+      color: "$ink"
+      fontFamily: "Playfair Display, Noto Serif SC"
+      lineHeight: 1.2
+      letterSpacing: 0
+    body:
+      fontSize: 16
+      color: "$text"
+      fontFamily: "Jost, Noto Sans SC"
+      lineHeight: 1.7
+    bodySm:
+      fontSize: 14
+      color: "$text"
+      fontFamily: "Jost, Noto Sans SC"
+      lineHeight: 1.6
+    sectionLabel:
+      fontSize: 11
+      color: "$primary"
+      fontFamily: "JetBrains Mono, MiSans"
+      lineHeight: 1.0
+      letterSpacing: 3
+  tableStyles:
+    default:
+      fontSize: 14
+      fontFamily: "Jost, Noto Sans SC"
+      headerFill: "$primary"
+      headerColor: "$white"
+      headerBold: true
+      bodyFill: ["$background", "$surface"]
+      bodyColor: "$ink"
+      border:
+        style: solid
+        width: 1
+        color: "$border"
+
+size: [1280, 720]
+pages:
+  - test-demo-pages/page_01_cover.page
+  - test-demo-pages/page_02_toc.page
+  - test-demo-pages/page_03_chapter.page
+  - test-demo-pages/page_04_content.page
+  - test-demo-pages/page_05_data_chart.page
+  - test-demo-pages/page_06_data_table.page
+  - test-demo-pages/page_07_timeline.page
+  - test-demo-pages/page_08_final.page

@@ -1,0 +1,55 @@
+pageType: cover
+elements:
+  - elementType: shape
+    shapeName: rect
+    bounds: [0, 0, 1280, 720]
+    layer: -1
+    fill:
+      type: solid
+      color: "$background"
+  - elementType: shape
+    shapeName: rect
+    bounds: [80, 0, 2, 720]
+    layer: 0
+    fill:
+      type: solid
+      color: "$border"
+  - elementType: text
+    bounds: [160, 200, 960, 80]
+    layer: 1
+    styleRef: "$heroTitle"
+    content:
+      text: |
+        <p>Design-Driven PPTX</p>
+  - elementType: text
+    bounds: [160, 300, 960, 40]
+    layer: 1
+    styleRef: "$sectionLabel"
+    content:
+      text: |
+        <p>COMPREHENSIVE TEST DEMONSTRATION</p>
+  - elementType: shape
+    shapeName: rect
+    bounds: [160, 370, 60, 2]
+    layer: 2
+    fill:
+      type: solid
+      color: "$primary"
+  - elementType: text
+    bounds: [160, 400, 600, 80]
+    layer: 1
+    styleRef: "$body"
+    content:
+      text: |
+        <p>Testing charts, tables, timelines, shapes, animations, and rich text rendering across the full pipeline.</p>
+  - elementType: text
+    bounds: [160, 600, 400, 30]
+    layer: 1
+    styleRef: "$bodySm"
+    content:
+      text: |
+        <p>June 2026 · Grove Style</p>
+    animation:
+      type: fade
+      trigger: onClick
+      duration: 600

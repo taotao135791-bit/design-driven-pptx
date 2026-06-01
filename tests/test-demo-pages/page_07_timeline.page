@@ -1,0 +1,157 @@
+pageType: content
+elements:
+  - elementType: shape
+    shapeName: rect
+    bounds: [0, 0, 1280, 720]
+    layer: -1
+    fill:
+      type: solid
+      color: "$background"
+  - elementType: text
+    bounds: [120, 60, 600, 30]
+    layer: 1
+    styleRef: "$sectionLabel"
+    content:
+      text: |
+        <p>ROADMAP</p>
+  - elementType: text
+    bounds: [120, 110, 600, 50]
+    layer: 1
+    styleRef: "$sectionHeadline"
+    content:
+      text: |
+        <p>Project Timeline</p>
+  - elementType: shape
+    shapeName: rect
+    bounds: [120, 220, 1040, 3]
+    layer: 0
+    fill:
+      type: solid
+      color: "$primary"
+  - elementType: shape
+    elementId: phase-dot-1
+    shapeName: ellipse
+    bounds: [170, 208, 28, 28]
+    layer: 1
+    fill:
+      type: solid
+      color: "$primary"
+  - elementType: text
+    bounds: [120, 260, 200, 30]
+    layer: 1
+    styleRef: "$columnTitle"
+    content:
+      text: |
+        <p>Phase 1</p>
+  - elementType: text
+    bounds: [120, 300, 200, 80]
+    layer: 1
+    styleRef: "$bodySm"
+    content:
+      text: |
+        <p>Discovery & Research</p>
+        <p><span style="color:#8a8476">Jan - Mar</span></p>
+  - elementType: shape
+    elementId: phase-dot-2
+    shapeName: ellipse
+    bounds: [470, 208, 28, 28]
+    layer: 1
+    fill:
+      type: solid
+      color: "$surfaceAlt"
+    border:
+      style: solid
+      width: 2
+      color: "$primary"
+  - elementType: text
+    bounds: [420, 260, 200, 30]
+    layer: 1
+    styleRef: "$columnTitle"
+    content:
+      text: |
+        <p>Phase 2</p>
+  - elementType: text
+    bounds: [420, 300, 200, 80]
+    layer: 1
+    styleRef: "$bodySm"
+    content:
+      text: |
+        <p>Design & Prototype</p>
+        <p><span style="color:#8a8476">Apr - Jun</span></p>
+  - elementType: shape
+    elementId: phase-dot-3
+    shapeName: ellipse
+    bounds: [770, 208, 28, 28]
+    layer: 1
+    fill:
+      type: solid
+      color: "$surfaceAlt"
+    border:
+      style: solid
+      width: 2
+      color: "$primary"
+  - elementType: text
+    bounds: [720, 260, 200, 30]
+    layer: 1
+    styleRef: "$columnTitle"
+    content:
+      text: |
+        <p>Phase 3</p>
+  - elementType: text
+    bounds: [720, 300, 200, 80]
+    layer: 1
+    styleRef: "$bodySm"
+    content:
+      text: |
+        <p>Development</p>
+        <p><span style="color:#8a8476">Jul - Sep</span></p>
+  - elementType: shape
+    elementId: phase-dot-4
+    shapeName: ellipse
+    bounds: [1070, 208, 28, 28]
+    layer: 1
+    fill:
+      type: solid
+      color: "$surfaceAlt"
+    border:
+      style: solid
+      width: 2
+      color: "$primary"
+  - elementType: text
+    bounds: [1020, 260, 200, 30]
+    layer: 1
+    styleRef: "$columnTitle"
+    content:
+      text: |
+        <p>Phase 4</p>
+  - elementType: text
+    bounds: [1020, 300, 200, 80]
+    layer: 1
+    styleRef: "$bodySm"
+    content:
+      text: |
+        <p>Launch & Scale</p>
+        <p><span style="color:#8a8476">Oct - Dec</span></p>
+  - elementType: shape
+    shapeName: rect
+    bounds: [120, 450, 1040, 160]
+    layer: 0
+    fill:
+      type: solid
+      color: "$surface"
+    border:
+      style: solid
+      width: 1
+      color: "$border"
+  - elementType: text
+    bounds: [160, 480, 960, 120]
+    layer: 1
+    styleRef: "$body"
+    content:
+      text: |
+        <p><strong>Current Status:</strong> We are in <span style="color:#c8524a">Phase 2</span> — Design & Prototype. The team has completed the initial user research and is now iterating on high-fidelity prototypes for stakeholder review.</p>
+    animation:
+      type: flyIn
+      direction: bottom
+      trigger: onClick
+      duration: 500

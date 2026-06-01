@@ -1,0 +1,98 @@
+pageType: content
+elements:
+  - elementType: shape
+    shapeName: rect
+    bounds: [0, 0, 1280, 720]
+    layer: -1
+    fill:
+      type: solid
+      color: "$background"
+  - elementType: text
+    bounds: [120, 60, 600, 30]
+    layer: 1
+    styleRef: "$sectionLabel"
+    content:
+      text: |
+        <p>KEY INSIGHTS</p>
+  - elementType: text
+    bounds: [120, 110, 600, 50]
+    layer: 1
+    styleRef: "$sectionHeadline"
+    content:
+      text: |
+        <p>Rich Text & Shape Testing</p>
+  - elementType: shape
+    shapeName: rect
+    bounds: [120, 180, 500, 2]
+    layer: 2
+    fill:
+      type: solid
+      color: "$border"
+  - elementType: text
+    bounds: [120, 210, 540, 280]
+    layer: 1
+    styleRef: "$body"
+    content:
+      text: |
+        <p>This paragraph tests <strong>bold text</strong>, <em>italic emphasis</em>, and <span style="color:#c8524a">colored inline spans</span>.</p>
+        <p>We also support hyperlinks: <a href="https://example.com">Click here</a></p>
+        <p>Numbered lists work too:</p>
+        <ol>
+          <li>First item with <strong>bold</strong></li>
+          <li>Second item with <em>italic</em></li>
+          <li>Third item</li>
+        </ol>
+  - elementType: shape
+    shapeName: rect
+    bounds: [720, 210, 440, 200]
+    layer: 0
+    fill:
+      type: solid
+      color: "$surface"
+    # Dark-theme card depth: light edge highlight instead of black shadow
+    border:
+      style: solid
+      width: 1
+      color: "#d4cfbf33"
+  - elementType: text
+    bounds: [760, 240, 360, 30]
+    layer: 1
+    styleRef: "$columnTitle"
+    content:
+      text: |
+        <p>Card Title</p>
+  - elementType: text
+    bounds: [760, 290, 360, 100]
+    layer: 1
+    styleRef: "$bodySm"
+    content:
+      text: |
+        <p>This card tests background fill, border, and shadow rendering in the converter pipeline.</p>
+  - elementType: shape
+    shapeName: roundRect
+    bounds: [120, 540, 200, 48]
+    layer: 0
+    fill:
+      type: solid
+      color: "$primary"
+  - elementType: text
+    bounds: [120, 540, 200, 48]
+    layer: 1
+    styleRef: "$bodySm"
+    content:
+      text: |
+        <p><span style="color:#e8e4d6">Call to Action</span></p>
+    animation:
+      type: peekIn
+      direction: bottom
+      trigger: onClick
+      duration: 400
+  - elementType: shape
+    shapeName: star5
+    bounds: [1100, 100, 60, 60]
+    layer: 2
+    fill:
+      type: solid
+      color: "$primary"
+    opacity: 0.6
+    rotation: 15

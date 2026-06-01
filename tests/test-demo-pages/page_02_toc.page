@@ -1,0 +1,88 @@
+pageType: table_of_contents
+elements:
+  - elementType: shape
+    shapeName: rect
+    bounds: [0, 0, 1280, 720]
+    layer: -1
+    fill:
+      type: solid
+      color: "$background"
+  - elementType: text
+    bounds: [120, 80, 400, 40]
+    layer: 1
+    styleRef: "$sectionLabel"
+    content:
+      text: |
+        <p>CONTENTS</p>
+  - elementType: text
+    bounds: [120, 140, 600, 60]
+    layer: 1
+    styleRef: "$sectionHeadline"
+    content:
+      text: |
+        <p>What We Will Cover</p>
+  - elementType: shape
+    shapeName: rect
+    bounds: [120, 230, 500, 2]
+    layer: 2
+    fill:
+      type: solid
+      color: "$border"
+  - elementType: text
+    bounds: [120, 260, 500, 40]
+    layer: 1
+    styleRef: "$body"
+    content:
+      text: |
+        <p><span style="color:#c8524a">01</span>   Data Visualization</p>
+  - elementType: text
+    bounds: [120, 320, 500, 40]
+    layer: 1
+    styleRef: "$body"
+    content:
+      text: |
+        <p><span style="color:#c8524a">02</span>   Analytics Table</p>
+  - elementType: text
+    bounds: [120, 380, 500, 40]
+    layer: 1
+    styleRef: "$body"
+    content:
+      text: |
+        <p><span style="color:#c8524a">03</span>   Project Timeline</p>
+  - elementType: text
+    bounds: [120, 440, 500, 40]
+    layer: 1
+    styleRef: "$body"
+    content:
+      text: |
+        <p><span style="color:#c8524a">04</span>   Conclusion</p>
+  - elementType: shape
+    shapeName: rect
+    bounds: [720, 180, 440, 360]
+    layer: 0
+    fill:
+      type: solid
+      color: "$surface"
+    border:
+      style: solid
+      width: 1
+      color: "$border"
+  - elementType: text
+    bounds: [760, 220, 360, 280]
+    layer: 1
+    styleRef: "$bodySm"
+    content:
+      text: |
+        <p>This demo tests the complete conversion pipeline including:</p>
+        <ul>
+          <li>Bar & line charts with series styles</li>
+          <li>Formatted data tables</li>
+          <li>Timeline with step nodes</li>
+          <li>Freeform shapes & decorations</li>
+          <li>Animations & transitions</li>
+        </ul>
+    animation:
+      type: flyIn
+      direction: right
+      trigger: onClick
+      duration: 500

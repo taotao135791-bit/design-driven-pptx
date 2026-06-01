@@ -5,7 +5,7 @@ import os
 import re
 from pathlib import Path
 
-STYLES_DIR = Path("/Users/guolintao/Downloads/Kimi_Agent_PPT%E7%94%9F%E6%88%90%E6%8A%80%E8%83%BD%E5%8C%96-2/design-driven-pptx/styles")
+STYLES_DIR = Path(__file__).resolve().parent.parent / "styles"
 
 # Pre-defined replacement blocks for each style that has SVG file references.
 REPLACEMENTS = {

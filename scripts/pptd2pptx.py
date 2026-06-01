@@ -9,6 +9,7 @@ Usage:
     python pptd2pptx.py <path-to.pptd> [<output.pptx>]
 """
 
+import argparse
 import sys
 import os
 import re
@@ -17,6 +18,7 @@ import tempfile
 import math
 import urllib.request
 from html.parser import HTMLParser
+from typing import Optional, List, Dict, Any, Tuple
 
 import yaml
 from pptx import Presentation
@@ -221,7 +223,7 @@ def svg_to_png_bytes(svg_path):
         transform = (2.0, 0.0, 0.0, 2.0, 0.0, 0.0)
         png = resvg.render(tree, transform)
         return png
-    except Exception as e:
+    except (OSError, ImportError, ValueError, RuntimeError) as e:
         print(f"Warning: SVG rendering failed for {svg_path}: {e}")
         return None
 
@@ -521,11 +523,19 @@ class PPTDConverter:
             'flyIn': ('flyIn', 'in'),
             'flyOut': ('flyOut', 'out'),
             'growShrink': ('growShrink', 'in'),
+            'spin': ('spin', 'in'),
+            'bounce': ('bounce', 'in'),
+            'pulse': ('pulse', 'in'),
+            'swivel': ('swivel', 'in'),
+            'float': ('float', 'in'),
+            'split': ('split', 'in'),
+            'stripe': ('stripe', 'in'),
+            'compress': ('compress', 'in'),
         }
 
         # Direction normalization for filter params
         DIR_MAP = {'left': 'left', 'right': 'right', 'top': 'up', 'bottom': 'down',
-                   'up': 'up', 'down': 'down'}
+                   'up': 'up', 'down': 'down', 'center': 'center', 'across': 'across'}
 
         TRIGGER_NODE_TYPES = {
             'onClick': 'clickEffect',
@@ -713,11 +723,38 @@ class PPTDConverter:
             result.append((cmd, pts))
         return result
 
+    def _sample_cubic_bezier(self, p0, p1, p2, p3, steps=12):
+        """Sample points along a cubic Bezier curve."""
+        pts = []
+        for i in range(1, steps + 1):
+            t = i / steps
+            t2 = t * t
+            t3 = t2 * t
+            mt = 1 - t
+            mt2 = mt * mt
+            mt3 = mt2 * mt
+            x = mt3 * p0[0] + 3 * mt2 * t * p1[0] + 3 * mt * t2 * p2[0] + t3 * p3[0]
+            y = mt3 * p0[1] + 3 * mt2 * t * p1[1] + 3 * mt * t2 * p2[1] + t3 * p3[1]
+            pts.append((int(round(x)), int(round(y))))
+        return pts
+
+    def _sample_quadratic_bezier(self, p0, p1, p2, steps=10):
+        """Sample points along a quadratic Bezier curve."""
+        pts = []
+        for i in range(1, steps + 1):
+            t = i / steps
+            mt = 1 - t
+            x = mt * mt * p0[0] + 2 * mt * t * p1[0] + t * t * p2[0]
+            y = mt * mt * p0[1] + 2 * mt * t * p1[1] + t * t * p2[1]
+            pts.append((int(round(x)), int(round(y))))
+        return pts
+
     def _add_freeform_shape(self, slide, element):
         """Draw a custom freeform shape from SVG-like path data.
         
         Path format: "viewW,viewH;M x y L x y ... Z"
         Coordinates are in viewBox space and mapped to element bounds.
+        Cubic (C) and Quadratic (Q) Bezier curves are sampled into line segments.
         """
         path_str = element.get('path', '')
         if not path_str:
@@ -735,6 +772,8 @@ class PPTDConverter:
         path_cmds = parts[1].strip()
 
         bounds = element.get('bounds', [0, 0, 100, 100])
+        if len(bounds) < 4:
+            return None
         bx, by, bw, bh = bounds
         bx_emu, by_emu, bw_emu, bh_emu = self._to_emu(bx, by, bw, bh)
 
@@ -760,7 +799,7 @@ class PPTDConverter:
 
         builder = slide.shapes.build_freeform(Emu(start_pt[0]), Emu(start_pt[1]))
 
-        current_pt = start_pt
+        current_pt = (float(start_pt[0]), float(start_pt[1]))
         for cmd, pts in cmds:
             if cmd == 'M':
                 for i, pt in enumerate(pts):
@@ -768,27 +807,46 @@ class PPTDConverter:
                         continue  # start point already set
                     px, py = map_x(pt[0]), map_y(pt[1])
                     builder.add_line_segments([(Emu(px), Emu(py))])
-                    current_pt = (px, py)
+                    current_pt = (float(px), float(py))
             elif cmd == 'L':
                 segs = []
                 for pt in pts:
                     px, py = map_x(pt[0]), map_y(pt[1])
                     segs.append((Emu(px), Emu(py)))
-                    current_pt = (px, py)
+                    current_pt = (float(px), float(py))
                 if segs:
                     builder.add_line_segments(segs)
             elif cmd == 'C':
-                # Cubic bezier — approximate with straight line to endpoint
                 for pt in pts:
-                    px, py = map_x(pt[4]), map_y(pt[5])
-                    builder.add_line_segments([(Emu(px), Emu(py))])
-                    current_pt = (px, py)
+                    p0 = current_pt
+                    p1 = (float(map_x(pt[0])), float(map_y(pt[1])))
+                    p2 = (float(map_x(pt[2])), float(map_y(pt[3])))
+                    p3 = (float(map_x(pt[4])), float(map_y(pt[5])))
+                    sampled = self._sample_cubic_bezier(p0, p1, p2, p3, steps=12)
+                    for px, py in sampled:
+                        builder.add_line_segments([(Emu(px), Emu(py))])
+                    current_pt = p3
             elif cmd == 'Q':
-                # Quadratic bezier — approximate with straight line to endpoint
                 for pt in pts:
-                    px, py = map_x(pt[2]), map_y(pt[3])
+                    p0 = current_pt
+                    p1 = (float(map_x(pt[0])), float(map_y(pt[1])))
+                    p2 = (float(map_x(pt[2])), float(map_y(pt[3])))
+                    sampled = self._sample_quadratic_bezier(p0, p1, p2, steps=10)
+                    for px, py in sampled:
+                        builder.add_line_segments([(Emu(px), Emu(py))])
+                    current_pt = p2
+            elif cmd == 'H':
+                for pt in pts:
+                    px = map_x(pt[0])
+                    py = int(current_pt[1])
                     builder.add_line_segments([(Emu(px), Emu(py))])
-                    current_pt = (px, py)
+                    current_pt = (float(px), float(py))
+            elif cmd == 'V':
+                for pt in pts:
+                    px = int(current_pt[0])
+                    py = map_y(pt[0])
+                    builder.add_line_segments([(Emu(px), Emu(py))])
+                    current_pt = (float(px), float(py))
             elif cmd in ('Z', 'z'):
                 builder._add_close()
 
@@ -1320,13 +1378,18 @@ class PPTDConverter:
         if src.startswith('http://') or src.startswith('https://'):
             try:
                 fd, tmp_path = tempfile.mkstemp(suffix=os.path.splitext(src.split('?')[0])[1] or '.jpg')
-                os.close(fd)
-                urllib.request.urlretrieve(src, tmp_path)
+                with os.fdopen(fd, 'wb') as f:
+                    req = urllib.request.Request(src, headers={'User-Agent': 'Mozilla/5.0'})
+                    with urllib.request.urlopen(req, timeout=15) as resp:
+                        f.write(resp.read())
                 src = tmp_path
-            except Exception as e:
+            except (urllib.error.URLError, urllib.error.HTTPError, OSError, TimeoutError) as e:
                 print(f"Warning: failed to download image from {src}: {e}")
                 if tmp_path and os.path.exists(tmp_path):
-                    os.remove(tmp_path)
+                    try:
+                        os.remove(tmp_path)
+                    except OSError:
+                        pass
                 return None
         elif not os.path.isabs(src):
             src = os.path.join(self.base_dir, src)
@@ -1812,7 +1875,7 @@ class PPTDConverter:
                     pass
 
             return graphic_frame
-        except Exception as e:
+        except (ValueError, KeyError, TypeError, AttributeError, RuntimeError) as e:
             print(f"Error rendering chart: {e}")
             shape = slide.shapes.add_shape(
                 MSO_SHAPE.RECTANGLE, Emu(x), Emu(y), Emu(w), Emu(h)
@@ -1839,7 +1902,7 @@ class PPTDConverter:
         try:
             from icon_paths import get_icon_path
             path_str = get_icon_path(icon_name)
-        except Exception:
+        except (ImportError, NameError, AttributeError):
             path_str = None
 
         if path_str:
@@ -2053,7 +2116,7 @@ class PPTDConverter:
                     self._add_chart(slide, element)
                 elif etype == 'icon':
                     self._add_icon(slide, element)
-            except Exception as e:
+            except (ValueError, KeyError, TypeError, AttributeError, RuntimeError) as e:
                 eid = element.get('elementId', 'unknown')
                 print(f"Error processing element {eid} ({etype}): {e}")
 
@@ -2169,19 +2232,57 @@ class PPTDConverter:
 # CLI
 # ---------------------------------------------------------------------------
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python pptd2pptx.py <path-to.pptd> [<output.pptx>]")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        description="Convert PPTD presentations to PPTX files",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python pptd2pptx.py presentation.pptd
+  python pptd2pptx.py presentation.pptd output.pptx
+  python pptd2pptx.py presentation.pptd --verbose
+        """,
+    )
+    parser.add_argument("pptd", help="Path to the .pptd master file")
+    parser.add_argument("output", nargs="?", help="Output .pptx path (default: same base name)")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Print detailed conversion info")
+    parser.add_argument("--check", action="store_true", help="Run validation before conversion")
 
-    pptd_path = sys.argv[1]
-    output_path = sys.argv[2] if len(sys.argv) > 2 else None
+    args = parser.parse_args()
+
+    pptd_path = args.pptd
+    output_path = args.output
 
     if not os.path.exists(pptd_path):
-        print(f"File not found: {pptd_path}")
+        print(f"Error: File not found: {pptd_path}", file=sys.stderr)
         sys.exit(1)
 
+    if args.check:
+        try:
+            from check_pptd import Checker
+            checker = Checker(pptd_path)
+            result = checker.run()
+            if result != 0:
+                print("Validation failed. Use --verbose for details.", file=sys.stderr)
+                sys.exit(1)
+            print("Validation passed.")
+        except (ImportError, OSError, RuntimeError) as e:
+            print(f"Warning: Could not run validation: {e}", file=sys.stderr)
+
     converter = PPTDConverter(pptd_path)
-    converter.convert(output_path)
+    if args.verbose:
+        print(f"Converting: {pptd_path}")
+        print(f"  Pages: {len(converter.pptd.get('pages', []))}")
+        print(f"  Theme colors: {list(converter.pptd.get('theme', {}).get('colors', {}).keys())}")
+
+    try:
+        result = converter.convert(output_path)
+        print(f"Saved: {result}")
+    except Exception as e:
+        print(f"Error: Conversion failed: {e}", file=sys.stderr)
+        if args.verbose:
+            import traceback
+            traceback.print_exc()
+        sys.exit(1)
 
 
 if __name__ == '__main__':

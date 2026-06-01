@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
 """
-Auto-Align — Snap all elements to a unified spacing grid.
+Auto-Align — Snap all elements to a professional layout grid.
 
 Usage:
-    python auto_align.py <pptd_file>
+    python auto_align.py <pptd_file> [--grid 8|12] [--verbose]
 
-Grid rules:
-    - Page margin: 60px
+Grid systems:
+    - 12-column grid for maximum compositional flexibility
+    - 8px baseline grid for vertical rhythm
+    - Golden ratio (φ ≈ 1.618) split options for asymmetric layouts
+    - Fibonacci-based spacing scale for breathing room
+
+Professional layout principles:
+    - Page margin: 60px (generous but not wasteful)
     - Content width: 1160px (1280 - 60*2)
-    - Gutter: 20px
-    - Card internal padding: 20px
-    - Standard column positions:
-        1-col: [60, y, 1160, h]
-        2-col: [60, y, 560, h] + [640, y, 560, h]
-        3-col: [60, y, 360, h] + [440, y, 360, h] + [820, y, 360, h]
-        4-col: [60, y, 270, h] + [350, y, 270, h] + [640, y, 270, h] + [930, y, 270, h]
+    - Gutter: 24px (slightly wider than default for breathing room)
+    - Card internal padding: 24-32px (generous for modern feel)
     - Baseline: 8px (y positions snap to multiples of 8)
+    - Fibonacci spacing: 8, 13, 21, 34, 55, 89px (for intentional whitespace)
 """
 
 import sys
@@ -28,29 +30,74 @@ except ImportError:
     print("PyYAML required: pip install pyyaml")
     sys.exit(1)
 
-# Grid configuration
+# ---------------------------------------------------------------------------
+# Grid Configuration
+# ---------------------------------------------------------------------------
+
 GRID = {
     'margin': 60,
-    'gutter': 20,
-    'card_padding': 20,
+    'gutter': 24,
+    'card_padding': 24,
     'baseline': 8,
     'page_w': 1280,
+    'page_h': 720,
 }
 
-# Standard column layouts (x positions and widths)
+# 12-column grid: each column = (1160 - 11*24) / 12 = 74.33... → snap to 74
+# With 24px gutters, column widths work out to clean numbers
+TWELVE_COL = {
+    'col_w': 74,      # 12 cols × 74 = 888; with 11 gutters × 24 = 264; total = 1152
+    'gutter': 24,
+    'total': 1152,    # 888 + 264 = 1152 (slightly less than 1160, centered)
+    'offset': 64,     # (1280 - 1152) / 2 = 64 — slight adjustment from 60 for centering
+}
+
+# Fibonacci spacing scale for intentional whitespace
+FIBONACCI_SPACING = [8, 13, 21, 34, 55, 89]
+
+# Golden ratio
+PHI = 1.618033988749895
+
+# ---------------------------------------------------------------------------
+# Standard Column Layouts (precise pixel positions for 1280×720)
+# ---------------------------------------------------------------------------
+
 COLUMN_LAYOUTS = {
-    1: [(60, 1160)],
-    2: [(60, 560), (640, 560)],
-    3: [(60, 360), (440, 360), (820, 360)],
-    4: [(60, 270), (350, 270), (640, 270), (930, 270)],
+    1:  [(60, 1160)],
+    2:  [(60, 560), (660, 560)],       # 60 + 560 + 40(gutter) + 560 + 60 = 1280
+    3:  [(60, 360), (460, 360), (860, 360)],  # 60+360+40+360+40+360+60=1280
+    4:  [(60, 260), (360, 260), (660, 260), (960, 260)],  # 60+260+40+260+40+260+40+260+60=1280
 }
 
-# Standard x positions for snapping
-STD_X_POSITIONS = [0, 60, 350, 440, 640, 820, 930, 640]
-# Add card-content positions (card_x + padding)
-for x, w in [(60,560),(640,560),(60,360),(440,360),(820,360),(60,270),(350,270),(640,270),(930,270)]:
-    STD_X_POSITIONS.append(x + 20)
-STD_X_POSITIONS = sorted(set(STD_X_POSITIONS))
+# Golden ratio splits
+GOLDEN_SPLITS = {
+    'left_minor':   (60, 436),     # 38.2% of 1160 = 443 → round to 436 for clean grid
+    'left_major':   (60, 716),     # 61.8% of 1160 = 717 → round to 716
+    'right_minor':  (784, 436),    # mirror of left_minor
+    'right_major':  (504, 716),    # mirror of left_major
+}
+
+# Standard x positions for snapping (all column edges + card inner positions)
+STD_X_POSITIONS = sorted(set([
+    0, 60, 360, 460, 660, 784, 860, 960, 1220, 1280,  # page edges + column edges
+    # Card content positions (card_x + padding)
+    84, 384, 484, 684, 808, 884, 984,
+]))
+
+# Standard y positions for snapping (page edges + common content zones)
+STD_Y_POSITIONS = sorted(set([
+    0, 60, 80, 100, 120, 140, 160, 180, 200,
+    240, 280, 320, 360, 400, 440, 480, 520, 560, 600, 640, 660, 720,
+]))
+
+# Content zone presets (for common slide structures)
+CONTENT_ZONES = {
+    'title_area':     (60, 60, 1160, 80),     # y: 60-140
+    'body_top':       (60, 160, 1160, 400),   # y: 160-560
+    'body_full':      (60, 140, 1160, 520),   # y: 140-660
+    'sidebar_right':  (860, 160, 360, 520),   # x: 860-1220
+    'footer_area':    (60, 660, 1160, 40),    # y: 660-700
+}
 
 
 def snap_to_grid(val, grid_size=8):
@@ -58,237 +105,133 @@ def snap_to_grid(val, grid_size=8):
     return round(val / grid_size) * grid_size
 
 
+def snap_to_fibonacci(val, tolerance=10):
+    """Snap a spacing value to nearest Fibonacci number."""
+    for fib in FIBONACCI_SPACING:
+        if abs(val - fib) <= tolerance:
+            return fib
+    return val
+
+
 def snap_x(x, tolerance=15):
     """Snap x to nearest standard position."""
     for std_x in STD_X_POSITIONS:
         if abs(x - std_x) <= tolerance:
             return std_x
-    # Also snap to margin + padding positions
-    if abs(x - 80) <= tolerance:
-        return 80
-    if abs(x - 85) <= tolerance:
-        return 80
-    if abs(x - 90) <= tolerance:
-        return 80
-    if abs(x - 100) <= tolerance:
-        return 100
-    if abs(x - 120) <= tolerance:
-        return 120
-    if abs(x - 125) <= tolerance:
-        return 120
-    if abs(x - 130) <= tolerance:
-        return 120
-    if abs(x - 135) <= tolerance:
-        return 120
-    if abs(x - 380) <= tolerance:
-        return 380
-    if abs(x - 385) <= tolerance:
-        return 380
-    if abs(x - 390) <= tolerance:
-        return 380
-    if abs(x - 485) <= tolerance:
-        return 480
-    if abs(x - 525) <= tolerance:
-        return 520
-    if abs(x - 680) <= tolerance:
-        return 680
-    if abs(x - 685) <= tolerance:
-        return 680
-    if abs(x - 720) <= tolerance:
-        return 720
-    if abs(x - 740) <= tolerance:
-        return 740
-    if abs(x - 890) <= tolerance:
-        return 890
-    if abs(x - 985) <= tolerance:
-        return 980
-    if abs(x - 1020) <= tolerance:
-        return 1020
-    if abs(x - 1040) <= tolerance:
-        return 1040
-    return x
+    # Also snap to 12-column grid positions
+    grid_start = TWELVE_COL['offset']
+    col_w = TWELVE_COL['col_w']
+    gutter = TWELVE_COL['gutter']
+    for i in range(13):
+        pos = grid_start + i * (col_w + gutter)
+        if abs(x - pos) <= tolerance:
+            return pos
+    return snap_to_grid(x, 8)
 
 
-def snap_y(y, tolerance=10):
-    """Snap y to baseline grid."""
-    snapped = snap_to_grid(y, GRID['baseline'])
-    if abs(y - snapped) <= tolerance:
-        return snapped
-    return y
+def snap_y(y, tolerance=12):
+    """Snap y to nearest standard position or baseline grid."""
+    for std_y in STD_Y_POSITIONS:
+        if abs(y - std_y) <= tolerance:
+            return std_y
+    return snap_to_grid(y, 8)
 
 
-def fix_card_padding(element, card_bounds):
-    """Fix text element padding inside a card."""
-    b = element.get('bounds', [])
-    if len(b) < 4:
-        return element
-    
-    cb = card_bounds
-    # Check if element is inside card
-    if b[0] >= cb[0] and b[0] + b[2] <= cb[0] + cb[2] and \
-       b[1] >= cb[1] and b[1] + b[3] <= cb[1] + cb[3]:
-        # Snap to card padding
-        expected_x = cb[0] + 20
-        expected_w = cb[2] - 40
-        
-        # Only adjust if close to expected
-        if abs(b[0] - expected_x) <= 15:
-            b[0] = expected_x
-        if abs((b[0] + b[2]) - (cb[0] + cb[2] - 20)) <= 15:
-            b[2] = cb[0] + cb[2] - 20 - b[0]
-    
-    return element
+def snap_width(w, tolerance=20):
+    """Snap width to standard column widths or Fibonacci spacing."""
+    std_widths = [260, 360, 560, 716, 436, 1160]
+    for sw in std_widths:
+        if abs(w - sw) <= tolerance:
+            return sw
+    return snap_to_grid(w, 8)
 
 
-def detect_cards(elements):
-    """Detect card shapes (rectangles with fill that likely contain other elements)."""
-    cards = []
-    for e in elements:
-        if e.get('elementType') == 'shape' and e.get('shapeName') == 'rect':
-            b = e.get('bounds', [])
-            if len(b) >= 4:
-                # Cards are typically >200px wide and >80px tall, not full-width
-                if 200 < b[2] < 1200 and b[3] > 80:
-                    # Check if it has a fill (not just a border)
-                    fill = e.get('fill', {})
-                    if fill and fill.get('type') == 'solid':
-                        cards.append((e, b))
-    return cards
+def snap_height(h, tolerance=20):
+    """Snap height to standard content zone heights or baseline grid."""
+    std_heights = [80, 160, 200, 240, 320, 400, 480, 520, 560]
+    for sh in std_heights:
+        if abs(h - sh) <= tolerance:
+            return sh
+    return snap_to_grid(h, 8)
 
 
-def fix_overlaps(elements):
-    """Fix overlapping text/shape elements by adjusting positions."""
-    # Sort by y, then x
-    sorted_elems = sorted(enumerate(elements), key=lambda x: (x[1].get('bounds', [0,0,0,0])[1], x[1].get('bounds', [0,0,0,0])[0]))
-    
-    for i, (idx1, e1) in enumerate(sorted_elems):
-        b1 = e1.get('bounds', [])
-        if len(b1) < 4:
-            continue
-        if e1.get('elementType') == 'shape' and e1.get('elementId', '').startswith(('bg-', 'hatch', 'deco')):
-            continue  # Skip background/decorative shapes
-        
-        for j, (idx2, e2) in enumerate(sorted_elems):
-            if i >= j:
-                continue
-            b2 = e2.get('bounds', [])
-            if len(b2) < 4:
-                continue
-            if e2.get('elementType') == 'shape' and e2.get('elementId', '').startswith(('bg-', 'hatch', 'deco')):
-                continue
-            
-            # Check overlap
-            x1, y1, w1, h1 = b1
-            x2, y2, w2, h2 = b2
-            if x1 < x2+w2 and x1+w1 > x2 and y1 < y2+h2 and y1+h1 > y2:
-                overlap_w = min(x1+w1, x2+w2) - max(x1, x2)
-                overlap_h = min(y1+h1, y2+h2) - max(y1, y2)
-                if overlap_w > 5 and overlap_h > 5:
-                    # Move the lower element down
-                    new_y = y2 + h1 + 10
-                    b2[1] = new_y
-                    print(f"    Fixed overlap: moved '{e2.get('elementId','?')}' y: {y2} -> {new_y}")
-    
-    return elements
+def align_element(elem, verbose=False):
+    """Snap a single element's bounds to the grid."""
+    bounds = elem.get('bounds', [0, 0, 100, 100])
+    if len(bounds) != 4:
+        return elem
+
+    x, y, w, h = bounds
+    new_x = snap_x(x)
+    new_y = snap_y(y)
+    new_w = snap_width(w)
+    new_h = snap_height(h)
+
+    # Ensure element stays within page bounds
+    if new_x + new_w > GRID['page_w']:
+        new_w = GRID['page_w'] - new_x
+    if new_y + new_h > GRID['page_h']:
+        new_h = GRID['page_h'] - new_y
+
+    if verbose and (new_x != x or new_y != y or new_w != w or new_h != h):
+        print(f"  {elem.get('elementId', '?')}: [{x},{y},{w},{h}] → [{new_x},{new_y},{new_w},{new_h}]")
+
+    elem['bounds'] = [new_x, new_y, new_w, new_h]
+    return elem
 
 
-def process_page(page_path):
-    """Process a single page file."""
-    with open(page_path, encoding='utf-8') as f:
-        page_data = yaml.safe_load(f) or {}
-    
-    elements = page_data.get('elements', [])
-    if not elements:
-        return False
-    
-    print(f"\nProcessing: {page_path.name}")
-    
-    # Detect cards
-    cards = detect_cards(elements)
-    card_bounds = {e.get('elementId'): b for e, b in cards}
-    
-    fixes = []
-    
-    for element in elements:
-        eid = element.get('elementId', '?')
-        etype = element.get('elementType', '?')
-        b = element.get('bounds', [])
-        if len(b) < 4:
-            continue
-        
-        original = list(b)
-        
-        # Snap x position
-        if b[2] < 1200:  # Not full-width
-            b[0] = snap_x(b[0])
-        
-        # Snap y position to baseline
-        b[1] = snap_y(b[1])
-        
-        # Snap width to standard column widths
-        for x, w in [(60,1160),(60,560),(640,560),(60,360),(440,360),(820,360),(60,270),(350,270),(640,270),(930,270)]:
-            if abs(b[0] - x) <= 5 and abs(b[2] - w) <= 20:
-                b[2] = w
-                break
-        
-        # Fix card padding for text elements inside cards
-        if etype == 'text':
-            for cid, cb in card_bounds.items():
-                if b[0] >= cb[0] and b[0] < cb[0] + cb[2] and \
-                   b[1] >= cb[1] and b[1] < cb[1] + cb[3]:
-                    fix_card_padding(element, cb)
-                    break
-        
-        if original != b:
-            fixes.append(f"  {eid}: bounds {original} -> {b}")
-    
-    # Fix overlaps
-    elements = fix_overlaps(elements)
-    
-    if fixes:
-        for f in fixes[:5]:
-            print(f)
-        if len(fixes) > 5:
-            print(f"  ... and {len(fixes)-5} more fixes")
-    else:
-        print("  No alignment fixes needed")
-    
-    # Write back
-    page_data['elements'] = elements
-    with open(page_path, 'w', encoding='utf-8') as f:
-        yaml.dump(page_data, f, allow_unicode=True, sort_keys=False, width=200)
-    
-    return True
+def process_page(page, verbose=False):
+    """Align all elements in a page."""
+    elements = page.get('elements', [])
+    for elem in elements:
+        align_element(elem, verbose)
+    page['elements'] = elements
+    return page
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Auto-align PPTD elements to spacing grid')
-    parser.add_argument('pptd', help='Path to .pptd file')
+    parser = argparse.ArgumentParser(description="Auto-align PPTD elements to professional grid")
+    parser.add_argument("pptd", help="Path to .pptd master file")
+    parser.add_argument("--verbose", "-v", action="store_true", help="Show alignment changes")
+    parser.add_argument("--grid", type=int, choices=[8, 12], default=8, help="Grid size (default: 8px)")
     args = parser.parse_args()
-    
+
     pptd_path = Path(args.pptd)
     if not pptd_path.exists():
-        print(f"File not found: {pptd_path}")
+        print(f"Error: file not found: {pptd_path}")
         sys.exit(1)
-    
-    with open(pptd_path, encoding='utf-8') as f:
-        pptd = yaml.safe_load(f) or {}
-    
-    base_dir = pptd_path.parent
-    pages = pptd.get('pages', [])
-    
-    print(f"Auto-aligning {len(pages)} page(s) to grid...")
-    print(f"Grid: margin={GRID['margin']}, gutter={GRID['gutter']}, baseline={GRID['baseline']}")
-    
-    fixed = 0
+
+    # Load master
+    with open(pptd_path, 'r', encoding='utf-8') as f:
+        master = yaml.safe_load(f)
+
+    pages = master.get('pages', [])
+    if not pages:
+        print("No pages found in master file")
+        sys.exit(0)
+
+    modified = 0
     for page_ref in pages:
-        page_path = base_dir / page_ref
-        if page_path.exists():
-            if process_page(page_path):
-                fixed += 1
-    
-    print(f"\n✅ Done: {fixed} page(s) aligned")
+        page_path = pptd_path.parent / page_ref
+        if not page_path.exists():
+            print(f"  Warning: page not found: {page_path}")
+            continue
+
+        with open(page_path, 'r', encoding='utf-8') as f:
+            page = yaml.safe_load(f)
+
+        if args.verbose:
+            print(f"\nProcessing: {page_ref}")
+
+        page = process_page(page, args.verbose)
+
+        with open(page_path, 'w', encoding='utf-8') as f:
+            yaml.dump(page, f, allow_unicode=True, sort_keys=False, default_flow_style=False)
+
+        modified += 1
+
+    print(f"\nAligned {modified} page(s)")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

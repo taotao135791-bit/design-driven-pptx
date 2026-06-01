@@ -1,0 +1,64 @@
+pageType: chapter
+elements:
+  - elementType: shape
+    shapeName: rect
+    bounds: [0, 0, 1280, 720]
+    layer: -1
+    fill:
+      type: solid
+      color: "$surface"
+  - elementType: shape
+    shapeName: rect
+    bounds: [0, 0, 480, 720]
+    layer: -1
+    fill:
+      type: solid
+      color: "$primary"
+  - elementType: text
+    bounds: [80, 200, 320, 100]
+    layer: 1
+    styleRef: "$heroTitle"
+    content:
+      text: |
+        <p><span style="color:#e8e4d6">01</span></p>
+  - elementType: text
+    bounds: [560, 200, 640, 60]
+    layer: 1
+    styleRef: "$sectionHeadline"
+    content:
+      text: |
+        <p>Data Visualization</p>
+  - elementType: shape
+    shapeName: rect
+    bounds: [560, 280, 60, 2]
+    layer: 2
+    fill:
+      type: solid
+      color: "$primary"
+  - elementType: text
+    bounds: [560, 310, 600, 100]
+    layer: 1
+    styleRef: "$body"
+    content:
+      text: |
+        <p>Charts that tell the story behind the numbers — from quarterly revenue trends to market share distribution.</p>
+  - elementType: text
+    bounds: [560, 440, 600, 140]
+    layer: 1
+    styleRef: "$body"
+    content:
+      text: |
+        <p>In this section, we explore how data visualization transforms raw numbers into actionable insights. From bar charts showing quarterly growth to pie charts revealing market share, each visual element is designed to communicate clearly and persuasively.</p>
+
+  - elementType: shape
+    shapeName: ellipse
+    bounds: [1100, 580, 80, 80]
+    layer: 0
+    fill:
+      type: solid
+      color: "$surfaceAlt"
+    opacity: 0.5
+    animation:
+      type: growShrink
+      trigger: withPrevious
+      duration: 800

@@ -1,0 +1,53 @@
+pageType: content
+elements:
+  - elementType: shape
+    shapeName: rect
+    bounds: [0, 0, 1280, 720]
+    layer: -1
+    fill:
+      type: solid
+      color: "$background"
+  - elementType: text
+    bounds: [120, 60, 600, 30]
+    layer: 1
+    styleRef: "$sectionLabel"
+    content:
+      text: |
+        <p>PERFORMANCE METRICS</p>
+  - elementType: text
+    bounds: [120, 110, 600, 50]
+    layer: 1
+    styleRef: "$sectionHeadline"
+    content:
+      text: |
+        <p>Q1-Q4 Analytics</p>
+  - elementType: table
+    bounds: [120, 190, 1040, 400]
+    layer: 1
+    data:
+      headers: [Metric, Q1, Q2, Q3, Q4, YoY]
+      rows:
+        - [Revenue, "$1.2M", "$1.8M", "$2.1M", "$2.4M", "+47%"]
+        - [Users, "12K", "18K", "25K", "34K", "+65%"]
+        - [Churn Rate, "5.2%", "4.8%", "4.1%", "3.5%", "-1.7pp"]
+        - [NPS Score, "42", "48", "55", "62", "+20"]
+        - [Avg Deal Size, "$8.5K", "$9.2K", "$10.1K", "$11.4K", "+34%"]
+    styleRef: "$default"
+    animation:
+      type: fade
+      trigger: onClick
+      duration: 500
+  - elementType: shape
+    shapeName: rect
+    bounds: [120, 620, 1040, 1]
+    layer: 2
+    fill:
+      type: solid
+      color: "$border"
+  - elementType: text
+    bounds: [120, 640, 600, 30]
+    layer: 1
+    styleRef: "$bodySm"
+    content:
+      text: |
+        <p><span style="color:#c8524a">*</span> All figures in USD. YoY compares Q4 2025 vs Q4 2024.</p>

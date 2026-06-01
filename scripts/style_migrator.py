@@ -13,8 +13,21 @@ import sys
 import os
 import argparse
 import re
-import math
 from pathlib import Path
+
+# Unified color utilities
+from color_utils import (
+    hex_to_rgb,
+    rgb_to_hex,
+    hex_to_hsl,
+    hsl_to_hex,
+    luminance,
+    contrast_ratio,
+    adjust_lightness,
+    ensure_contrast,
+    darken_for_contrast,
+    classify_palette,
+)
 
 # Optional image analysis
 try:
@@ -29,52 +42,6 @@ try:
     URL_AVAILABLE = True
 except ImportError:
     URL_AVAILABLE = False
-
-
-# ---------------------------------------------------------------------------
-# Color utilities
-# ---------------------------------------------------------------------------
-
-def hex_to_rgb(hex_color):
-    hex_color = hex_color.lstrip('#')
-    return (int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16))
-
-def rgb_to_hex(r, g, b):
-    return "#{:02x}{:02x}{:02x}".format(r, g, b)
-
-def luminance(r, g, b):
-    """Relative luminance for contrast ratio."""
-    rs = r / 255.0
-    gs = g / 255.0
-    bs = b / 255.0
-    rs = rs / 12.92 if rs <= 0.03928 else ((rs + 0.055) / 1.055) ** 2.4
-    gs = gs / 12.92 if gs <= 0.03928 else ((gs + 0.055) / 1.055) ** 2.4
-    bs = bs / 12.92 if bs <= 0.03928 else ((bs + 0.055) / 1.055) ** 2.4
-    return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs
-
-def hsl(hex_color):
-    """Convert hex to HSL tuple (h:0-360, s:0-1, l:0-1)."""
-    r, g, b = hex_to_rgb(hex_color)
-    r, g, b = r / 255.0, g / 255.0, b / 255.0
-    mx, mn = max(r, g, b), min(r, g, b)
-    l = (mx + mn) / 2.0
-    if mx == mn:
-        return (0, 0, l)
-    d = mx - mn
-    s = d / (2.0 - mx - mn) if l > 0.5 else d / (mx + mn)
-    if mx == r:
-        h = (60 * ((g - b) / d) + 360) % 360
-    elif mx == g:
-        h = (60 * ((b - r) / d) + 120) % 360
-    else:
-        h = (60 * ((r - g) / d) + 240) % 360
-    return (h, s, l)
-
-def contrast_ratio(hex1, hex2):
-    l1 = luminance(*hex_to_rgb(hex1))
-    l2 = luminance(*hex_to_rgb(hex2))
-    lighter, darker = max(l1, l2), min(l1, l2)
-    return (lighter + 0.05) / (darker + 0.05)
 
 
 # ---------------------------------------------------------------------------
@@ -96,8 +63,11 @@ def extract_colors_from_image(image_path, n_colors=6):
     colors = []
     for i in range(n_colors):
         r, g, b = palette[i*3], palette[i*3+1], palette[i*3+2]
-        # Count pixels of this color
-        count = sum(1 for px in quantized.getdata() if px == i)
+    # Build histogram in one pass
+    hist = quantized.histogram()
+    for i in range(n_colors):
+        r, g, b = palette[i*3], palette[i*3+1], palette[i*3+2]
+        count = hist[i] if i < len(hist) else 0
         colors.append({
             'hex': rgb_to_hex(r, g, b),
             'rgb': (r, g, b),
@@ -110,152 +80,8 @@ def extract_colors_from_image(image_path, n_colors=6):
     return colors
 
 
-def classify_palette(colors):
-    """Classify extracted colors into design roles: primary, accent, background, ink, text, surfaceAlt."""
-    # Calculate HSL for each color
-    for c in colors:
-        c['hsl'] = hsl(c['hex'])
-        c['lum'] = luminance(*c['rgb'])
-    
-    # Sort by luminance
-    by_lum = sorted(colors, key=lambda c: c['lum'])
-    
-    # Background: usually the lightest and most frequent, or darkest for dark themes
-    # Heuristic: if the most frequent color is very light (>0.8) or very dark (<0.15), it's background
-    most_frequent = colors[0]
-    mf_lum = most_frequent['lum']
-    
-    if mf_lum > 0.75:
-        # Light theme
-        background = most_frequent['hex']
-        ink_candidates = [c for c in by_lum if c['lum'] < 0.25]
-        ink = ink_candidates[0]['hex'] if ink_candidates else by_lum[0]['hex']
-    elif mf_lum < 0.2:
-        # Dark theme
-        background = most_frequent['hex']
-        ink_candidates = [c for c in by_lum if c['lum'] > 0.8]
-        ink = ink_candidates[-1]['hex'] if ink_candidates else by_lum[-1]['hex']
-    else:
-        # Mixed, pick the most frequent as background or use mid-tone
-        background = most_frequent['hex']
-        # Ink: darkest
-        ink = by_lum[0]['hex'] if by_lum[0]['lum'] < 0.3 else "#1A1A1A"
-    
-    # Primary/Accent: highest saturation, not too close to background or ink
-    by_sat = sorted(colors, key=lambda c: c['hsl'][1], reverse=True)
-    accent = None
-    for c in by_sat:
-        if c['hex'] != background and c['hex'] != ink and c['hsl'][1] > 0.15:
-            accent = c['hex']
-            break
-    if not accent:
-        accent = by_sat[0]['hex'] if by_sat[0]['hex'] != background else "#E85D5D"
-    
-    # Primary = accent (saturated color for emphasis)
-    primary = accent
-    
-    # Derive variants with contrast safety
-    primary_dark = adjust_lightness(primary, 0.75)
-    
-    # Ensure primary-on-white and white-on-primary contrast
-    primary_lum = luminance(*hex_to_rgb(primary))
-    white_on_primary = (1.0 + 0.05) / (primary_lum + 0.05)
-    if white_on_primary < 4.5:
-        # Primary is too bright for white text — generate a darker text-safe variant
-        primary_text = darken_for_contrast(primary, target_contrast=4.5, against="#FFFFFF")
-    else:
-        primary_text = primary
-    
-    # Text: medium gray, ensure contrast with background
-    bg_lum = luminance(*hex_to_rgb(background))
-    if bg_lum > 0.5:
-        text = "#6B6B6B"
-        text_light = "#B0B0B0"
-        white = "#FFFFFF"
-    else:
-        text = "#A0A0A0"
-        text_light = "#707070"
-        white = "#FFFFFF"
-    
-    # Ensure textLight has sufficient contrast on background (WCAG AA: 4.5:1)
-    text_light = darken_for_contrast(text_light, target_contrast=4.5, against=background)
-    
-    # SurfaceAlt: subtle variant of background
-    bg_hsl = hsl(background)
-    if bg_hsl[2] > 0.5:
-        surface_alt = adjust_lightness(background, 0.92)
-        surface = adjust_lightness(background, 0.96)
-    else:
-        surface_alt = adjust_lightness(background, 1.15)
-        surface = adjust_lightness(background, 1.08)
-    
-    return {
-        'primary': primary,
-        'primaryDark': primary_dark,
-        'primaryText': primary_text,
-        'background': background,
-        'surface': surface,
-        'surfaceAlt': surface_alt,
-        'ink': ink,
-        'text': text,
-        'textLight': text_light,
-        'white': white,
-    }
-
-
-def adjust_lightness(hex_color, factor):
-    """Lighten or darken a color."""
-    r, g, b = hex_to_rgb(hex_color)
-    r = min(255, max(0, int(r * factor)))
-    g = min(255, max(0, int(g * factor)))
-    b = min(255, max(0, int(b * factor)))
-    return rgb_to_hex(r, g, b)
-
-
-def ensure_contrast(hex_color, target_contrast=4.5, against="#FFFFFF"):
-    """Adjust a color (lighten or darken) until it achieves target contrast ratio against the given color."""
-    target_lum = luminance(*hex_to_rgb(against))
-    color_lum = luminance(*hex_to_rgb(hex_color))
-    
-    # Determine if we need to lighten or darken
-    if color_lum < target_lum:
-        # Color is darker than background, need to darken further
-        # target = (target_lum + 0.05) / (dark_lum + 0.05)
-        target_dark_lum = (target_lum + 0.05) / target_contrast - 0.05
-        target_dark_lum = max(0.0, target_dark_lum)
-        h, s, l = hsl(hex_color)
-        low, high = 0.0, l
-        for _ in range(20):
-            mid = (low + high) / 2
-            test_hex = hsl_to_hex(h, s, mid)
-            test_lum = luminance(*hex_to_rgb(test_hex))
-            if test_lum > target_dark_lum:
-                high = mid
-            else:
-                low = mid
-        return hsl_to_hex(h, s, low)
-    else:
-        # Color is lighter than background, need to lighten further
-        # target = (light_lum + 0.05) / (target_lum + 0.05)
-        target_light_lum = target_contrast * (target_lum + 0.05) - 0.05
-        target_light_lum = min(1.0, target_light_lum)
-        h, s, l = hsl(hex_color)
-        low, high = l, 1.0
-        for _ in range(20):
-            mid = (low + high) / 2
-            test_hex = hsl_to_hex(h, s, mid)
-            test_lum = luminance(*hex_to_rgb(test_hex))
-            if test_lum < target_light_lum:
-                low = mid
-            else:
-                high = mid
-        return hsl_to_hex(h, s, high)
-
-
-def darken_for_contrast(hex_color, target_contrast=4.5, against="#FFFFFF"):
-    """Darken a color until it achieves target contrast ratio against the given color.
-    Deprecated: use ensure_contrast instead."""
-    return ensure_contrast(hex_color, target_contrast, against)
+# classify_palette, adjust_lightness, ensure_contrast, darken_for_contrast
+# are now imported from color_utils
 
 
 # ---------------------------------------------------------------------------
@@ -355,7 +181,7 @@ def parse_text_description(text):
             # Auto-detect from second color if available
             if len(extracted_colors) > 1:
                 second = extracted_colors[1]['hex']
-                lum = luminance(*hex_to_rgb(second))
+                lum = luminance(second)
                 if lum > 0.7:
                     colors['background'] = second
                     colors['ink'] = '#1A1A1A'
@@ -377,19 +203,20 @@ def parse_text_description(text):
                 colors['textLight'] = '#B0B0B0'
                 colors['white'] = '#FFFFFF'
                 colors['surfaceAlt'] = '#E8E8E8'
-    else:
-        # Default fallback
-        colors = {
-            'primary': '#E85D5D',
-            'primaryDark': '#D44A4A',
-            'background': '#F5F0E8',
-            'surfaceAlt': '#E8E0D4',
-            'ink': '#1A1A1A',
-            'text': '#6B6B6B',
-            'textLight': '#B0B0B0',
-            'white': '#FFFFFF',
-        }
-    
+    # Ensure derived colors are present
+    if 'surface' not in colors:
+        bg_lum = luminance(colors['background'])
+        if bg_lum > 0.5:
+            colors['surface'] = adjust_lightness(colors['background'], 0.96)
+            colors['surfaceAlt'] = adjust_lightness(colors['background'], 0.92)
+        else:
+            colors['surface'] = adjust_lightness(colors['background'], 1.08)
+            colors['surfaceAlt'] = adjust_lightness(colors['background'], 1.15)
+    if 'primaryDark' not in colors:
+        colors['primaryDark'] = adjust_lightness(colors['primary'], 0.85)
+    if 'primaryText' not in colors:
+        colors['primaryText'] = colors['primary']
+
     return {
         'colors': colors,
         'typography': typography,
